@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: Website-Mainframe communication
+  version: 0.1.0
+servers:
+  - url: "{protocol}://{url}/api/v1"
+    variables:
+      url:
+        description: Customer ID assigned by the service provider
+        default: 'localhost:9000'
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+
+paths:
+  /token:
+    post:
+      tags:
+      - Token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema: 
+              $ref: '#/components/schemas/Request_Token'
+      
+      responses:
+        '200':
+          description: Returns a Request_Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response_Token'
+        '403':
+          description: User does not have access to this resouce 
+  
+  /ngo:
+    post:
+      tags:
+      - NGO 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NGO_Post'
+      responses:
+        '201':
+          description: Creates an NGO Account
+  
+  /ngo/me:
+    get:
+      tags:
+        - NGO
+      responses:
+        '200':
+          description: Returns currently logged in NGO
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NGO_Get'
+
+      security:
+        - OAuth2PasswordBearer: []  
+
+  /project:
+    post:
+      tags:
+        - Project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project_Post'
+      security:
+        - OAuth2PasswordBearer: []
+    
+    get:
+      tags:
+        - Project 
+      responses:
+        '200':
+          description: Returns all porjects of NGO_Get
+          content:
+            application/json:
+              schema:
+                type: array 
+                items: 
+                  $ref: '#/components/schemas/Project_Base'
+      security:
+        - OAuth2PasswordBearer: []
+    
+  /project/{project_id}/donations:
+    parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: number
+    get:
+      tags:
+        - Donations 
+      responses:
+        '200':
+          description: Retruns all donations of a Project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Donation_Get'
+      security:
+          - OAuth2PasswordBearer: []
+
+  /project/{project_id}/spending:
+    parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: number
+    post:
+      tags: 
+        - Spendings
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/Spending_Post'
+      security:
+          - OAuth2PasswordBearer: []
+
+    get:
+      tags:
+        - Spendings
+      responses:
+        '200':
+          description: Retruns all spendings of a Project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Spending_Get'
+      security:
+          - OAuth2PasswordBearer: []
+
+components:
+  schemas:
+    NGO_Post:
+      type: object
+      required:
+      - name
+      - address
+      - contact
+      - mail
+      - password
+      properties:
+        name:
+          type: string
+          title: Name
+        address:
+          type: string
+          title: Address
+        contact:
+          type: string
+          title: Contact
+        mail:
+          type: string
+          title: Mail
+        password:
+          type: string
+          title: Password
+
+    NGO_Get:
+      type: object
+      required:
+      - name
+      - address
+      - contact
+      - mail
+      - description
+      - images
+      - ngo_id
+      - projects
+      properties:
+        name:
+          type: string
+          title: Name
+        address:
+          type: string
+          title: Address
+        contact:
+          type: string
+          title: Contact
+        mail:
+          type: string
+          title: Mail
+        description:
+          type: string
+          title: Description
+        images:
+          type: array
+          items: 
+            type: string
+          title: Images
+        ngo_id:
+          type: string
+          title: Ngo_id
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project_Base'
+
+    Project_Base:
+      type: object
+      required:
+        - name
+        - description
+        - images
+        - spending_goal
+        - speding_current
+        - progress
+        - project_id
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        images:
+          type: array
+          items: 
+            type: string
+          title: Images
+        spending_goal:
+          type: number
+          title: Spending Goal
+        speding_current:
+          type: number
+          title: Spending Current
+        progress:
+          type: number
+          title: Progress
+        project_id:
+          type: number
+          title: Project ID
+
+    Project_Post:
+      type: object
+      required:
+        - name
+        - description
+        - spending_goal
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        spending_goal:
+          type: number
+          title: Spending Goal
+
+    Donation_Get:
+      type: object
+      required:
+        - amount
+        - donator
+      properties:
+        amount:
+          type: number
+        donator:
+          $ref: '#/components/schemas/Donator_Base'
+    
+    Donator_Base:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+
+    Spending_Post:
+      type: object
+      required:
+        - purpose
+        - description
+        - amount
+        - receipt
+      properties: 
+        purpose:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        receipt:
+          type: string
+
+    Spending_Get:
+      type: object
+      required:
+        - purpose
+        - description
+        - amount
+        - receipt
+        - spending_id
+      properties: 
+        purpose:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+        receipt:
+          type: string
+        spending_id:
+          type: number
+
+
+    Request_Token:
+      properties:
+        grant_type:
+          anyOf:
+          - type: string
+            pattern: password
+          - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Secret
+      type: object
+      required:
+      - username
+      - password
+      title: Request_Token
+
+    Response_Token:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+      type: object
+      required:
+      - access_token
+      - token_type
+      title: Token
+
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: token
+  
