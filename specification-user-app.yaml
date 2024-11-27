@@ -13,12 +13,12 @@ servers:
           - http
           - https
         default: https
-
+      
 paths:
   /donator:
     post:
       tags:
-        - Donator
+      - Donator
       requestBody:
         required: true
         content:
@@ -33,8 +33,101 @@ paths:
               schema:
                 type: integer
 
-  /donator/{donator_id}:
+  /donator/{donator_id}:  
     get:
+      parameters:
+      - name: donator_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      tags:
+      - Donator
+      responses:
+        '200':
+          description: Returning donator object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donator'
+              
+  /donator/me:  
+    get:
+      tags:
+      - Donator
+      responses:
+        '200':
+          description: Returning donator object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donator'
+
+
+  /donator/{donator_id}/wallet:
+    get:
+      parameters:
+      - name: donator_id
+        in: path
+        required: true
+        schema:
+          type: integer
+
+      tags:
+        - Wallet
+      responses:
+        '200':
+          description: Returning wallet of the Donator
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+
+  /donator/{donator_id}/donationbox:
+    get:
+      parameters:
+      - name: donator_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      tags:
+        - Donationbox
+      responses:
+        '200':
+          description: Returns a list of all donationboxes of the donator
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Donationbox'
+
+
+    post:
+      parameters:
+      - name: donator_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      tags:
+        - Donationbox
+        
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Donationbox_Register'
+
+      responses:
+        '201':
+          description: Donationbox was added successfully.
+
+
+  /donator/{donator_id}/powersupply:
+    get: 
       parameters:
         - name: donator_id
           in: path
@@ -42,38 +135,52 @@ paths:
           schema:
             type: integer
       tags:
-        - Donator
+        - PowerSupply
+        - 
       responses:
         '200':
-          description: Returning donator object
+          description: "Returns all powersupplies of the user"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Donator'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Power_Supply'
 
-  /donator/me:
-    get:
+    post:
+      parameters:
+      - name: donator_id
+        in: path
+        required: true
+        schema:
+          type: integer
       tags:
-        - Donator
-      responses:
-        '200':
-          description: Returning donator object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Donator'
+        - PowerSupply
+        
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Power_Supply_Register'
 
+      responses:
+        '201':
+          description: Power_Supply was added successfully.
+          
+
+  
   /token:
     post:
       tags:
-        - Token
+      - Token
       requestBody:
         required: true
         content:
           application/x-www-form-urlencoded:
-            schema:
+            schema: 
               $ref: '#/components/schemas/Request_Token'
-
+      
       responses:
         '200':
           description: Returns a Request_Token
@@ -82,21 +189,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Response_Token'
         '403':
-          description: User does not have access to this resouce
-
-
-
+          description: User does not have access to this resouce           
+        
+      
+      
 security:
   - OAuth2PasswordBearer: []
-
+    
 components:
   schemas:
     Donator_Register:
       type: object
       required:
-        - name
-        - password
-        - mail
+      - name
+      - password
+      - mail
       properties:
         name:
           type: string
@@ -107,7 +214,7 @@ components:
         mail:
           type: string
           title: Mail
-
+          
     Donator:
       type: object
       required:
@@ -125,13 +232,139 @@ components:
           type: integer
           title: Donator_Id
 
+    Wallet:
+      type: object
+      required:
+        - balance
+      
+      properties:
+        balance:
+          type: number
+          title: Balance
+
+
+    Donationbox:
+      type: object
+      required:
+        - id
+        - state
+        - power_consumption
+      properties:
+        id:
+          type: string
+          title: ID
+        state:
+          type: string
+          enum:
+            - OFFLINE
+            - CONNECTED # SYSTEM IS UP BUT NO SURPLUS POWER AVAILABLE
+            - READY     # SYSTEM IS READY AND SURPLUS POWER IS AVAILABLE
+            - RUNNING  # IS RUNNING TASK
+            - ERROR
+          title: State
+        power_consumption:
+          type: number
+          title: Power Consumption
+        loc_lat:
+          type: number
+          title: Location Latitude
+        loc_lgt:
+          type: number
+          title: Location Longitude
+        power_supply_id:
+          type: string
+          title: Power Supply Id 
+
+
+    Donationbox_Register:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          title: ID
+        loc_lat:
+          type: number
+          title: Location Latitude
+        loc_lgt:
+          type: number
+          title: Location Longitude
+        power_supply_id:
+          type: string
+          title: Power Supply Id 
+
+    Power_Supply:
+      type: object
+      required:
+        - id
+        - supply_type
+        - is_online
+        - power_surplus
+        - name
+        - model_number
+      properties:
+        id:
+          type: string
+          title: ID
+        supply_type:
+          type: string
+          enum:
+            - Solar
+            - Alternative
+          title: Supply Type
+        is_online:
+          type: boolean
+          title: Is Online
+        power_surplus:
+          type: number
+          title: Power Surplus
+        name: 
+          type: string
+          title: Name
+        model_number: 
+          type: string
+          title: Model Number
+        api_key: 
+          type: string
+          title: API Key
+        ip:
+          type: string
+          title: IP Address
+        password: 
+          type: string
+          title: Password
+
+    Power_Supply_Register:
+      type: object
+      required:
+        - model_number
+        - name
+      properties:
+        name:
+          type: string
+          title: Name
+        model_number: 
+          type: string
+          title: Model Number
+        api_key: 
+          type: string
+          title: API Key
+        ip:
+          type: string
+          title: IP Address
+        password: 
+          type: string
+          title: Password
+
+        
     Request_Token:
       properties:
         grant_type:
           anyOf:
-            - type: string
-              pattern: password
-            - type: 'null'
+          - type: string
+            pattern: password
+          - type: 'null'
           title: Grant Type
         username:
           type: string
@@ -145,18 +378,18 @@ components:
           default: ''
         client_id:
           anyOf:
-            - type: string
-            - type: 'null'
+          - type: string
+          - type: 'null'
           title: Client Id
         client_secret:
           anyOf:
-            - type: string
-            - type: 'null'
+          - type: string
+          - type: 'null'
           title: Client Secret
       type: object
       required:
-        - username
-        - password
+      - username
+      - password
       title: Request_Token
 
     Response_Token:
@@ -169,10 +402,10 @@ components:
           title: Token Type
       type: object
       required:
-        - access_token
-        - token_type
+      - access_token
+      - token_type
       title: Token
-
+      
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2
