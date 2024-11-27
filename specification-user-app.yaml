@@ -1,0 +1,182 @@
+openapi: 3.1.0
+info:
+  title: Donator-Mainframe communication
+  version: 0.1.0
+servers:
+  - url: "{protocol}://{url}/api/v1"
+    variables:
+      url:
+        description: Customer ID assigned by the service provider
+        default: 'http://localhost:9000/api/v1'
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+
+paths:
+  /donator:
+    post:
+      tags:
+        - Donator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Donator_Register'
+      responses:
+        '201':
+          description: Created Donator
+          content:
+            application/json:
+              schema:
+                type: integer
+
+  /donator/{donator_id}:
+    get:
+      parameters:
+        - name: donator_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      tags:
+        - Donator
+      responses:
+        '200':
+          description: Returning donator object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donator'
+
+  /donator/me:
+    get:
+      tags:
+        - Donator
+      responses:
+        '200':
+          description: Returning donator object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donator'
+
+  /token:
+    post:
+      tags:
+        - Token
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Request_Token'
+
+      responses:
+        '200':
+          description: Returns a Request_Token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response_Token'
+        '403':
+          description: User does not have access to this resouce
+
+
+
+security:
+  - OAuth2PasswordBearer: []
+
+components:
+  schemas:
+    Donator_Register:
+      type: object
+      required:
+        - name
+        - password
+        - mail
+      properties:
+        name:
+          type: string
+          title: Name
+        password:
+          type: string
+          title: Password
+        mail:
+          type: string
+          title: Mail
+
+    Donator:
+      type: object
+      required:
+        - name
+        - mail
+        - donator_id
+      properties:
+        name:
+          type: string
+          title: Name
+        mail:
+          type: string
+          title: Mail
+        donator_id:
+          type: integer
+          title: Donator_Id
+
+    Request_Token:
+      properties:
+        grant_type:
+          anyOf:
+            - type: string
+              pattern: password
+            - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: Client Secret
+      type: object
+      required:
+        - username
+        - password
+      title: Request_Token
+
+    Response_Token:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+      type: object
+      required:
+        - access_token
+        - token_type
+      title: Token
+
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: token
