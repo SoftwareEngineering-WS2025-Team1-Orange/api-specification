@@ -1,0 +1,153 @@
+asyncapi: '2.0.0'
+info:
+  title: Donation Box - Mainframe WebSocket API
+  version: '1.0.0'
+  description: >
+    This API is used for communication between the Donation Box and the Mainframe.
+    The Donation Box connects to the Mainframe via WebSocket, authenticates on the application layer,
+    and then receives periodic status updates and commands regarding the mining process.
+servers:
+  production:
+    url: 'wss://mainframe.example.com/ws'
+    protocol: 'wss'  # WebSocket over TLS (secure)
+    description: WebSocket connection over TLS between Donation Box and Mainframe.
+
+channels:
+  authenticate:
+    description: "Channel for authenticating the DonationBox with the Mainframe."
+    publish:
+      operationId: 'authRequest'
+      description: "Authenticate the Donation Box on the application level after WebSocket connection."
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/AuthRequest'
+    
+    subscribe:
+      operationId: 'authResponse'
+      description: "Response from Mainframe after authentication."
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/AuthResponse'
+
+  statusUpdate:
+    description: "Regular status requested by the Mainframe from the Donation Box."
+    publish:
+      operationId: 'statusRequest'
+      description: "Mainframe requests status update from DonationBox"
+    subscribe:
+      operationId: 'statusUpdate'
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/StatusUpdateResponse'
+
+  startMining:
+    description: "Request to start mining, sent by the Mainframe."
+    publish:
+      operationId: 'startMiningCommand'
+      description: "Mainframe orders Donation Box to start mining"
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/StartMiningRequest'
+
+    subscribe:
+      operationId: 'startMining'
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/StartMiningResponse'
+
+  stopMining:
+    description: "Request to stop mining, sent by the Mainframe."
+    publish:
+      operationId: 'stopMiningCommand'
+      description: 'Mainframe orders Donation Box to stop mining'
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/StopMiningRequest'
+
+    subscribe:
+      operationId: 'stopMining'
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/StopMiningResponse'
+
+components:
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        response:
+          type: string
+          enum:
+            - 'success'
+            - 'failure'
+
+    StatusUpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        response:
+          type: string
+          enum:
+            - 'currently_mining'
+            - 'ERR_ready_for_mining'
+            - 'ERR_not_ready_for_mining'
+            - 'ERR_error'
+
+    StartMiningRequest:
+      type: object
+      properties:
+        imageName:
+          type: string
+        environmentVars:
+          type: object
+
+    StopMiningRequest:
+      type: object
+      properties:
+        imageName:
+          type: string
+
+    StartMiningResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        response:
+          type: string
+          enum:
+            - 'started_mining'
+            - 'ERR_image_not_found'
+            - 'ERR_could_not_start_container'
+            - 'ERR_connection_to_mining_pool_failed'
+            - 'ERR_authentication_on_mining_pool_failed'
+            - 'ERR_other'
+
+    StopMiningResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        response:
+          type: string
+          enum:
+            - 'stopped_mining'
+            - 'ERR_container_not_running'
+            - 'ERR_other'
