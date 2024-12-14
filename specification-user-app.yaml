@@ -36,11 +36,7 @@ paths:
   /donator/{donator_id}:  
     get:
       parameters:
-      - name: donator_id
-        in: path
-        required: true
-        schema:
-          type: integer
+        $href: '#/components/parameters/donatorid'
       tags:
       - Donator
       responses:
@@ -50,6 +46,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Donator'
+
+  /donator/login:
+    post:
+      tags:
+      - Donator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Donator_Login'
+      responses:
+        '200':
+          description: Returning donator object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  donator_id:
+                      type: integer
+                  access_token:
+                    $ref: '#/components/schemas/Response_Token'
+        '403':
+          description: User does not have access to this resource
+
               
   /donator/me:  
     get:
@@ -67,12 +89,7 @@ paths:
   /donator/{donator_id}/wallet:
     get:
       parameters:
-      - name: donator_id
-        in: path
-        required: true
-        schema:
-          type: integer
-
+        $href: '#/components/parameters/donatorid'
       tags:
         - Wallet
       responses:
@@ -86,11 +103,7 @@ paths:
   /donator/{donator_id}/donationbox:
     get:
       parameters:
-      - name: donator_id
-        in: path
-        required: true
-        schema:
-          type: integer
+        $href: '#/components/parameters/donatorid'
       tags:
         - Donationbox
       responses:
@@ -106,11 +119,7 @@ paths:
 
     post:
       parameters:
-      - name: donator_id
-        in: path
-        required: true
-        schema:
-          type: integer
+        $href: '#/components/parameters/donatorid'
       tags:
         - Donationbox
         
@@ -129,14 +138,9 @@ paths:
   /donator/{donator_id}/powersupply:
     get: 
       parameters:
-        - name: donator_id
-          in: path
-          required: true
-          schema:
-            type: integer
+        $href: '#/components/parameters/donatorid'
       tags:
         - PowerSupply
-        - 
       responses:
         '200':
           description: "Returns all powersupplies of the user"
@@ -149,11 +153,7 @@ paths:
 
     post:
       parameters:
-      - name: donator_id
-        in: path
-        required: true
-        schema:
-          type: integer
+        $href: '#/components/parameters/donatorid'
       tags:
         - PowerSupply
         
@@ -168,6 +168,105 @@ paths:
         '201':
           description: Power_Supply was added successfully.
           
+  /project:
+    get:
+      parameters:
+        - name: filter_project_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: filter_category
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Project_Category'
+        - name: filter_is_favorite
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: filter_name_contains
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: filter_is_archived
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: filter_donated_to
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: filter_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: filter_results_per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: filter_ngo_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      tags:
+        - Project
+      responses:
+        '200':
+          description: "Returns all projects based on the filter query parameters"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+
+
+  /ngo:
+    get:
+      parameters:
+        - name: filter_ngo_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: filter_is_favorite
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: filter_name_contains
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: filter_donated_to
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: filter_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: filter_results_per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+
 
   
   /token:
@@ -197,15 +296,28 @@ security:
   - OAuth2PasswordBearer: []
     
 components:
+
+  parameters:
+    donatorid:
+      name: donator_id
+      in: path
+      required: true
+      schema:
+        type: integer
+
   schemas:
     Donator_Register:
       type: object
       required:
-      - name
+      - firstname
+      - lastname
       - password
       - mail
       properties:
-        name:
+        firstname:
+          type: string
+          title: Name
+        lastname:
           type: string
           title: Name
         password:
@@ -214,15 +326,32 @@ components:
         mail:
           type: string
           title: Mail
+
+    Donator_Login:
+      type: object
+      required:
+      - mail
+      - password
+      properties:
+        mail:
+          type: string
+          title: Mail
+        password:
+          type: string
+          title: Password
           
     Donator:
       type: object
       required:
-        - name
+        - firstname
+        - lastname
         - mail
         - donator_id
       properties:
-        name:
+        firstname:
+          type: string
+          title: Name
+        lastname:
           type: string
           title: Name
         mail:
@@ -247,49 +376,39 @@ components:
       type: object
       required:
         - id
-        - state
-        - power_consumption
+        - cuid
+        - last_status
       properties:
         id:
-          type: string
+          type: integer
           title: ID
-        state:
+        cuid:
+          type: string
+          title: cuid
+        last_status:
           type: string
           enum:
             - OFFLINE
+            - ERROR
             - CONNECTED # SYSTEM IS UP BUT NO SURPLUS POWER AVAILABLE
             - READY     # SYSTEM IS READY AND SURPLUS POWER IS AVAILABLE
-            - RUNNING  # IS RUNNING TASK
-            - ERROR
-          title: State
+            - WORKING  # IS RUNNING TASK
+          title: Last Status
         power_consumption:
           type: number
           title: Power Consumption
-        loc_lat:
-          type: number
-          title: Location Latitude
-        loc_lgt:
-          type: number
-          title: Location Longitude
         power_supply_id:
           type: string
           title: Power Supply Id 
 
-
     Donationbox_Register:
       type: object
       required:
-        - id
+        - cuid
       properties:
-        id:
+        cuid:
           type: string
-          title: ID
-        loc_lat:
-          type: number
-          title: Location Latitude
-        loc_lgt:
-          type: number
-          title: Location Longitude
+          title: cuid
         power_supply_id:
           type: string
           title: Power Supply Id 
@@ -298,24 +417,30 @@ components:
       type: object
       required:
         - id
-        - supply_type
-        - is_online
+        - type
+        - last_status
         - power_surplus
         - name
         - model_number
+        - api_config
       properties:
         id:
           type: string
           title: ID
-        supply_type:
+        type:
           type: string
           enum:
             - Solar
             - Alternative
           title: Supply Type
-        is_online:
-          type: boolean
-          title: Is Online
+        last_status:
+          type: string
+          enum:
+            - OFFLINE
+            - CONNECTED
+            - INVALID_AUTH
+            - ERROR
+          title: Last Status
         power_surplus:
           type: number
           title: Power Surplus
@@ -325,21 +450,18 @@ components:
         model_number: 
           type: string
           title: Model Number
-        api_key: 
+        api_config:
           type: string
-          title: API Key
-        ip:
-          type: string
-          title: IP Address
-        password: 
-          type: string
-          title: Password
+          title: API Config
+          description: Flexible JSON string that contains attributes depending on the model number
 
     Power_Supply_Register:
       type: object
       required:
         - model_number
         - name
+        - type
+        - api_config
       properties:
         name:
           type: string
@@ -347,17 +469,123 @@ components:
         model_number: 
           type: string
           title: Model Number
-        api_key: 
+        api_config:
           type: string
-          title: API Key
-        ip:
+          title: API Config
+          description: Flexible JSON string that contains attributes depending on the model number
+        type:
           type: string
-          title: IP Address
-        password: 
-          type: string
-          title: Password
+          enum:
+            - Solar
+            - Alternative
+          title: Supply Type
 
-        
+    NGO:
+      type: object
+      required:
+        - name
+        - id
+        - website_url
+        - description
+        - banner_uri
+        - is_favorite
+      properties:
+        name:
+          type: string
+          title: Name
+        id:
+          type: integer
+          title: ID
+        website_url:
+          type: string
+          title: Website URL
+        description:
+          type: string
+          title: Description
+        banner_uri:
+          type: string
+          title: Banner URI
+        is_favorite:
+          type: boolean
+          title: Is Favorite
+
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - banner_uri
+        - ngo_id
+        - ngo_name
+        - is_favorite
+        - fundraising_closed
+        - fundraising_goal
+        - current_fundraising
+        - target_date
+        - is_archived
+        - category
+        - created_at
+
+      properties:
+        id:
+          type: integer
+          title: ID
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        banner_uri:
+          type: string
+          title: Banner URI
+        ngo_id:
+          type: integer
+          title: NGO ID
+        ngo_name:
+          type: string
+          title: NGO Name
+        is_favorite:
+          type: boolean
+          title: Is Favorite
+        fundraising_goal:
+          type: number
+          title: Fundraising Goal
+        current_fundraising:
+          type: number
+          title: Current Fundraising
+        target_date:
+          type: string
+          format: date
+          title: Target Date
+        created_at:
+          type: string
+          format: date
+          title: Created At
+        fundraising_closed:
+          type: boolean
+          title: Fundraising Closed
+        is_archived:
+          type: boolean
+          title: Is Archived
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project_Category'
+
+    Project_Category:
+      type: string
+      enum:
+        - Education
+        - Health
+        - Environment
+        - Human_Rights
+        - Animal_Rights
+        - Social
+        - Other
+
+
     Request_Token:
       properties:
         grant_type:
