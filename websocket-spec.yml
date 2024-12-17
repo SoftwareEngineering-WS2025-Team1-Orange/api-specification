@@ -116,6 +116,8 @@ components:
       properties:
         imageName:
           type: string
+        containerName:
+          type: string
         environmentVars:
           type: object
 
