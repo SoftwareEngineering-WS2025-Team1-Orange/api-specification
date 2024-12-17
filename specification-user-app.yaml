@@ -18,7 +18,7 @@ paths:
   /donator:
     post:
       tags:
-        - Donator
+      - Donator
       requestBody:
         required: true
         content:
@@ -38,7 +38,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/donatorid'
       tags:
-        - Donator
+      - Donator
       responses:
         '200':
           description: Returning donator object
@@ -50,7 +50,7 @@ paths:
   /donator/login:
     post:
       tags:
-        - Donator
+      - Donator
       requestBody:
         required: true
         content:
@@ -72,11 +72,11 @@ paths:
         '403':
           description: User does not have access to this resource
 
-
+              
   /donator/me:
     get:
       tags:
-        - Donator
+      - Donator
       responses:
         '200':
           description: Returning donator object
@@ -122,7 +122,7 @@ paths:
         - $ref: '#/components/parameters/donatorid'
       tags:
         - Donationbox
-
+        
       requestBody:
         required: true
         content:
@@ -156,7 +156,7 @@ paths:
         - $ref: '#/components/parameters/donatorid'
       tags:
         - PowerSupply
-
+        
       requestBody:
         required: true
         content:
@@ -167,7 +167,7 @@ paths:
       responses:
         '201':
           description: Power_Supply was added successfully.
-
+          
   /project:
     get:
       parameters:
@@ -218,11 +218,26 @@ paths:
           required: false
           schema:
             type: integer
+        - name: sort_created_at
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Sort_Type'
+        - name: sort_name
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Sort_Type'
+        - name: sort_recent_donated_at
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Sort_Type'
       tags:
-        - NGO
+        - Project
       responses:
         '200':
-          description: "Returns all projects based on the filter query parameters"
+          description: "Returns all projects based on the filter query parameters and sort parameters"
           content:
             application/json:
               schema:
@@ -268,27 +283,39 @@ paths:
           schema:
             type: integer
             default: 20
+        - name: sort_created_at
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Sort_Type'
+        - name: sort_name
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Sort_Type'
       responses:
         '200':
-          description: "Returns all ngo's based on the filter query parameters"
+          description: "Returns all ngos based on the filter query parameters and sort parameters"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NGO'
+                type: array
+                items:
+                  $ref: '#/components/schemas/NGO'
 
 
-
+  
   /token:
     post:
       tags:
-        - Token
+      - Token
       requestBody:
         required: true
         content:
           application/x-www-form-urlencoded:
-            schema:
+            schema: 
               $ref: '#/components/schemas/Request_Token'
-
+      
       responses:
         '200':
           description: Returns a Request_Token
@@ -297,13 +324,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Response_Token'
         '403':
-          description: User does not have access to this resouce
-
-
-
+          description: User does not have access to this resource
+        
+      
+      
 security:
   - OAuth2PasswordBearer: []
-
+    
 components:
 
   parameters:
@@ -318,10 +345,10 @@ components:
     Donator_Register:
       type: object
       required:
-        - firstname
-        - lastname
-        - password
-        - mail
+      - firstname
+      - lastname
+      - password
+      - mail
       properties:
         firstname:
           type: string
@@ -339,8 +366,8 @@ components:
     Donator_Login:
       type: object
       required:
-        - mail
-        - password
+      - mail
+      - password
       properties:
         mail:
           type: string
@@ -348,7 +375,7 @@ components:
         password:
           type: string
           title: Password
-
+          
     Donator:
       type: object
       required:
@@ -374,7 +401,7 @@ components:
       type: object
       required:
         - balance
-
+      
       properties:
         balance:
           type: number
@@ -408,7 +435,7 @@ components:
           title: Power Consumption
         power_supply_id:
           type: string
-          title: Power Supply Id
+          title: Power Supply Id 
 
     Donationbox_Register:
       type: object
@@ -420,7 +447,7 @@ components:
           title: cuid
         power_supply_id:
           type: string
-          title: Power Supply Id
+          title: Power Supply Id 
 
     Power_Supply:
       type: object
@@ -453,10 +480,10 @@ components:
         power_surplus:
           type: number
           title: Power Surplus
-        name:
+        name: 
           type: string
           title: Name
-        model_number:
+        model_number: 
           type: string
           title: Model Number
         api_config:
@@ -602,14 +629,19 @@ components:
         - Social
         - Other
 
+    Sort_Type:
+      type: string
+      enum:
+        - asc
+        - desc
 
     Request_Token:
       properties:
         grant_type:
           anyOf:
-            - type: string
-              pattern: password
-            - type: 'null'
+          - type: string
+            pattern: password
+          - type: 'null'
           title: Grant Type
         username:
           type: string
@@ -623,18 +655,18 @@ components:
           default: ''
         client_id:
           anyOf:
-            - type: string
-            - type: 'null'
+          - type: string
+          - type: 'null'
           title: Client Id
         client_secret:
           anyOf:
-            - type: string
-            - type: 'null'
+          - type: string
+          - type: 'null'
           title: Client Secret
       type: object
       required:
-        - username
-        - password
+      - username
+      - password
       title: Request_Token
 
     Response_Token:
@@ -647,10 +679,10 @@ components:
           title: Token Type
       type: object
       required:
-        - access_token
-        - token_type
+      - access_token
+      - token_type
       title: Token
-
+      
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2
