@@ -13,12 +13,12 @@ servers:
           - http
           - https
         default: https
-      
+
 paths:
   /donator:
     post:
       tags:
-      - Donator
+        - Donator
       requestBody:
         required: true
         content:
@@ -33,12 +33,12 @@ paths:
               schema:
                 type: integer
 
-  /donator/{donator_id}:  
+  /donator/{donator_id}:
     get:
       parameters:
-        $href: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/donatorid'
       tags:
-      - Donator
+        - Donator
       responses:
         '200':
           description: Returning donator object
@@ -50,7 +50,7 @@ paths:
   /donator/login:
     post:
       tags:
-      - Donator
+        - Donator
       requestBody:
         required: true
         content:
@@ -66,17 +66,17 @@ paths:
                 type: object
                 properties:
                   donator_id:
-                      type: integer
+                    type: integer
                   access_token:
                     $ref: '#/components/schemas/Response_Token'
         '403':
           description: User does not have access to this resource
 
-              
-  /donator/me:  
+
+  /donator/me:
     get:
       tags:
-      - Donator
+        - Donator
       responses:
         '200':
           description: Returning donator object
@@ -89,7 +89,7 @@ paths:
   /donator/{donator_id}/wallet:
     get:
       parameters:
-        $href: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/donatorid'
       tags:
         - Wallet
       responses:
@@ -103,7 +103,7 @@ paths:
   /donator/{donator_id}/donationbox:
     get:
       parameters:
-        $href: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/donatorid'
       tags:
         - Donationbox
       responses:
@@ -119,10 +119,10 @@ paths:
 
     post:
       parameters:
-        $href: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/donatorid'
       tags:
         - Donationbox
-        
+
       requestBody:
         required: true
         content:
@@ -136,9 +136,9 @@ paths:
 
 
   /donator/{donator_id}/powersupply:
-    get: 
+    get:
       parameters:
-        $href: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/donatorid'
       tags:
         - PowerSupply
       responses:
@@ -153,10 +153,10 @@ paths:
 
     post:
       parameters:
-        $href: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/donatorid'
       tags:
         - PowerSupply
-        
+
       requestBody:
         required: true
         content:
@@ -167,7 +167,7 @@ paths:
       responses:
         '201':
           description: Power_Supply was added successfully.
-          
+
   /project:
     get:
       parameters:
@@ -219,7 +219,7 @@ paths:
           schema:
             type: integer
       tags:
-        - Project
+        - NGO
       responses:
         '200':
           description: "Returns all projects based on the filter query parameters"
@@ -233,6 +233,8 @@ paths:
 
   /ngo:
     get:
+      tags:
+        - NGO
       parameters:
         - name: filter_ngo_id
           in: query
@@ -266,20 +268,27 @@ paths:
           schema:
             type: integer
             default: 20
+      responses:
+        '200':
+          description: "Returns all ngo's based on the filter query parameters"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NGO'
 
 
-  
+
   /token:
     post:
       tags:
-      - Token
+        - Token
       requestBody:
         required: true
         content:
           application/x-www-form-urlencoded:
-            schema: 
+            schema:
               $ref: '#/components/schemas/Request_Token'
-      
+
       responses:
         '200':
           description: Returns a Request_Token
@@ -288,13 +297,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Response_Token'
         '403':
-          description: User does not have access to this resouce           
-        
-      
-      
+          description: User does not have access to this resouce
+
+
+
 security:
   - OAuth2PasswordBearer: []
-    
+
 components:
 
   parameters:
@@ -309,10 +318,10 @@ components:
     Donator_Register:
       type: object
       required:
-      - firstname
-      - lastname
-      - password
-      - mail
+        - firstname
+        - lastname
+        - password
+        - mail
       properties:
         firstname:
           type: string
@@ -330,8 +339,8 @@ components:
     Donator_Login:
       type: object
       required:
-      - mail
-      - password
+        - mail
+        - password
       properties:
         mail:
           type: string
@@ -339,7 +348,7 @@ components:
         password:
           type: string
           title: Password
-          
+
     Donator:
       type: object
       required:
@@ -365,7 +374,7 @@ components:
       type: object
       required:
         - balance
-      
+
       properties:
         balance:
           type: number
@@ -399,7 +408,7 @@ components:
           title: Power Consumption
         power_supply_id:
           type: string
-          title: Power Supply Id 
+          title: Power Supply Id
 
     Donationbox_Register:
       type: object
@@ -411,7 +420,7 @@ components:
           title: cuid
         power_supply_id:
           type: string
-          title: Power Supply Id 
+          title: Power Supply Id
 
     Power_Supply:
       type: object
@@ -444,10 +453,10 @@ components:
         power_surplus:
           type: number
           title: Power Surplus
-        name: 
+        name:
           type: string
           title: Name
-        model_number: 
+        model_number:
           type: string
           title: Model Number
         api_config:
@@ -466,7 +475,7 @@ components:
         name:
           type: string
           title: Name
-        model_number: 
+        model_number:
           type: string
           title: Model Number
         api_config:
@@ -487,8 +496,10 @@ components:
         - id
         - website_url
         - description
+        - address
         - banner_uri
         - is_favorite
+        - contact
       properties:
         name:
           type: string
@@ -499,6 +510,12 @@ components:
         website_url:
           type: string
           title: Website URL
+        contact:
+          type: string
+          title: Contact Information
+        address:
+          type: string
+          title: Address Information
         description:
           type: string
           title: Description
@@ -552,7 +569,7 @@ components:
         fundraising_goal:
           type: number
           title: Fundraising Goal
-        current_fundraising:
+        fundraising_current:
           type: number
           title: Current Fundraising
         target_date:
@@ -590,9 +607,9 @@ components:
       properties:
         grant_type:
           anyOf:
-          - type: string
-            pattern: password
-          - type: 'null'
+            - type: string
+              pattern: password
+            - type: 'null'
           title: Grant Type
         username:
           type: string
@@ -606,18 +623,18 @@ components:
           default: ''
         client_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Client Id
         client_secret:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Client Secret
       type: object
       required:
-      - username
-      - password
+        - username
+        - password
       title: Request_Token
 
     Response_Token:
@@ -630,10 +647,10 @@ components:
           title: Token Type
       type: object
       required:
-      - access_token
-      - token_type
+        - access_token
+        - token_type
       title: Token
-      
+
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2
