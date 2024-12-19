@@ -72,19 +72,6 @@ paths:
         '403':
           description: User does not have access to this resource
 
-              
-  /donator/me:
-    get:
-      tags:
-      - Donator
-      responses:
-        '200':
-          description: Returning donator object
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Donator'
-
 
   /donator/{donator_id}/wallet:
     get:
@@ -168,9 +155,10 @@ paths:
         '201':
           description: Power_Supply was added successfully.
           
-  /project:
+  /donator/{donator_id}/project:
     get:
       parameters:
+        - $ref: '#/components/parameters/donatorid'
         - name: filter_project_id
           in: query
           required: false
@@ -191,7 +179,7 @@ paths:
           required: false
           schema:
             type: string
-        - name: filter_is_archived
+        - name: filter_include_archived
           in: query
           required: false
           schema:
@@ -218,17 +206,22 @@ paths:
           required: false
           schema:
             type: integer
-        - name: sort_created_at
+        - name: filter_ngo_name_contains
           in: query
           required: false
           schema:
-            $ref: '#/components/schemas/Sort_Type'
-        - name: sort_name
+            type: string
+        - name: sort_for
           in: query
+          description: "The field to sort by"
           required: false
           schema:
-            $ref: '#/components/schemas/Sort_Type'
-        - name: sort_recent_donated_at
+            type: string
+            enum:
+              - name
+              - created_at
+              - donated_recently
+        - name: sort_type
           in: query
           required: false
           schema:
@@ -246,11 +239,12 @@ paths:
                   $ref: '#/components/schemas/Project'
 
 
-  /ngo:
+  /donator/{donator_id}/ngo:
     get:
       tags:
         - NGO
       parameters:
+        - $ref: '#/components/parameters/donatorid'
         - name: filter_ngo_id
           in: query
           required: false
@@ -271,35 +265,38 @@ paths:
           required: false
           schema:
             type: boolean
-        - name: filter_page
+        - name: pagination_page
           in: query
           required: false
           schema:
             type: integer
             default: 1
-        - name: filter_results_per_page
+        - name: pagination_results_per_page
           in: query
           required: false
           schema:
             type: integer
             default: 20
-        - name: sort_created_at
+        - name: sort_type
           in: query
           required: false
           schema:
             $ref: '#/components/schemas/Sort_Type'
-        - name: sort_name
+        - name: sort_for
           in: query
+          description: "The field to sort by"
           required: false
           schema:
-            $ref: '#/components/schemas/Sort_Type'
+            type: string
+            enum:
+              - name
+              - created_at
       responses:
         '200':
           description: "Returns all ngos based on the filter query parameters and sort parameters"
           content:
             application/json:
               schema:
-                type: array
                 items:
                   $ref: '#/components/schemas/NGO'
 
@@ -521,7 +518,6 @@ components:
       required:
         - name
         - id
-        - website_url
         - description
         - address
         - banner_uri
@@ -565,7 +561,8 @@ components:
         - is_favorite
         - fundraising_closed
         - fundraising_goal
-        - current_fundraising
+        - fundraising_current
+        - progress
         - target_date
         - is_archived
         - category
@@ -610,6 +607,9 @@ components:
         fundraising_closed:
           type: boolean
           title: Fundraising Closed
+        progress:
+          type: number
+          title: Progress
         is_archived:
           type: boolean
           title: Is Archived
