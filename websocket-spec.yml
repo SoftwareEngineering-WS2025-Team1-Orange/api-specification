@@ -101,15 +101,19 @@ components:
     StatusUpdateResponse:
       type: object
       properties:
-        success:
-          type: boolean
         response:
-          type: string
-          enum:
-            - 'currently_mining'
-            - 'ERR_ready_for_mining'
-            - 'ERR_not_ready_for_mining'
-            - 'ERR_error'
+          runningContainers: 
+            type: array
+            items: 
+              type: string
+          finishedContainers: 
+            type: array
+            items: 
+              type: string
+          abortedContainers: 
+            type: array
+            items: 
+              type: string
 
     StartMiningRequest:
       type: object
