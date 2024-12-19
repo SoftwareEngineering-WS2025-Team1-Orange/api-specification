@@ -198,13 +198,13 @@ paths:
           required: false
           schema:
             type: boolean
-        - name: filter_page
+        - name: pagination_page
           in: query
           required: false
           schema:
             type: integer
             default: 1
-        - name: filter_results_per_page
+        - name: pagination_results_per_page
           in: query
           required: false
           schema:
