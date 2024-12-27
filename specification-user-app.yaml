@@ -307,7 +307,7 @@ paths:
 
   /donator/{donator_id}/donation:
     get:
-      operationId: getDonations
+      operationId: getDonationList
       parameters:
         - $ref: '#/components/parameters/donatorid'
         - name: filter_id
