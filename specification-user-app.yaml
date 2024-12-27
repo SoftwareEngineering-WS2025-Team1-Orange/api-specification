@@ -391,9 +391,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Donation'
+                type: object
+                properties:
+                  donations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Donation'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
 
   /token:
     post:
