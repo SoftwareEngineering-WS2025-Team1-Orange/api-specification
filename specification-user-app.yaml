@@ -227,6 +227,9 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - projects
+                - pagination
                 properties:
                   projects:
                     type: array
@@ -296,6 +299,9 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - ngos
+                - pagination
                 properties:
                   ngos:
                     type: array
@@ -445,6 +451,12 @@ components:
 
     Pagination:
       type: object
+      required:
+      - totalResults
+      - filteredResults
+      - currentPage
+      - pageSize
+      - numberOfPages
       properties:
         totalResults:
           type: integer
