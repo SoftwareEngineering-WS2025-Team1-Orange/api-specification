@@ -392,6 +392,9 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - donations
+                  - pagination
                 properties:
                   donations:
                     type: array
