@@ -311,36 +311,36 @@ paths:
                     $ref: '#/components/schemas/Pagination'
 
 
-  /api-donator/{donator_id}/donation:
+  /api-donator/{donator_id}/transaction:
     get:
-      operationId: getDonationList
+      operationId: getTransactionList
       parameters:
         - $ref: '#/components/parameters/donatorid'
-        - name: filter_id
+        - name: filter_donation_ngo_id
           in: query
           required: false
           schema:
             type: integer
-        - name: filter_ngo_id
-          in: query
-          required: false
-          schema:
-            type: integer
-        - name: filter_ngo_name
+        - name: filter_donation_ngo_name
           in: query
           required: false
           schema:
             type: string
-        - name: filter_project_id
+        - name: filter_donation_project_id
           in: query
           required: false
           schema:
             type: integer
-        - name: filter_project_name
+        - name: filter_donation_project_name
           in: query
           required: false
           schema:
             type: string
+        - name: filter_earning_donationbox_id
+          in: query
+          required: false
+          schema:
+            type: integer
         - name: filter_created_from
           in: query
           required: false
@@ -406,6 +406,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Donation'
+                  earnings:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Earning'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
 
@@ -533,7 +537,6 @@ components:
       required:
         - id
         - amount
-        - project
         - ngo
         - createdAt
       properties:
@@ -552,6 +555,49 @@ components:
           format: date-time
           title: Created At
 
+    Earning:
+      type: object
+      required:
+        - id
+        - amount
+        - createdAt
+        - activeTimeInPeriod
+        - donationBoxId
+        - payout
+      properties:
+        id:
+          type: integer
+          title: ID
+        amount:
+          type: number
+          title: Amount
+        createdAt:
+          type: string
+          format: date-time
+          title: Created At
+        activeTimeInPeriod:
+          type: number
+          title: Active Time In Period
+        donationBoxId:
+          type: number
+          title: Id of donationbox
+        payout:
+          $ref: '#/components/schemas/Payout'
+
+    Payout:
+      type: Object
+      required:
+        - periodStart
+        - periodEnd
+      properties:
+        periodStart:
+          type: string
+          format: date-time
+          title: Period Start
+        periodEnd:
+          type: string
+          format: date-time
+          title: Period End
 
     Donationbox:
       type: object
@@ -582,14 +628,32 @@ components:
           type: string
           title: Power Supply Id
 
+    Donationbox_Basic:
+      type: object
+      required:
+        - id
+        - cuid
+        - name
+      properties:
+        id:
+          type: integer
+          title: ID
+        cuid:
+          type: string
+          title: cuid
+
     Donationbox_Register:
       type: object
       required:
         - cuid
+        - name
       properties:
         cuid:
           type: string
           title: cuid
+        name:
+          type: string
+          title: Name
         power_supply_id:
           type: string
           title: Power Supply Id
