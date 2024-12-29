@@ -585,7 +585,7 @@ components:
           $ref: '#/components/schemas/Payout'
 
     Payout:
-      type: Object
+      type: object
       required:
         - periodStart
         - periodEnd
