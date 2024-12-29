@@ -15,11 +15,11 @@ servers:
         default: https
 
 paths:
-  /donator:
+  /api-donator/donator:
     post:
       operationId: registerDonator
       tags:
-      - Donator
+        - Donator
       requestBody:
         required: true
         content:
@@ -34,13 +34,13 @@ paths:
               schema:
                 type: integer
 
-  /donator/{donator_id}:
+  /api-donator/donator/{donator_id}:
     get:
       operationId: getDonator
       parameters:
         - $ref: '#/components/parameters/donatorid'
       tags:
-      - Donator
+        - Donator
       responses:
         '200':
           description: Returning donator object
@@ -49,11 +49,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Donator'
 
-  /donator/login:
+  /api-donator/auth/token:
     post:
       operationId: login
       tags:
-      - Donator
+        - Donator
       requestBody:
         required: true
         content:
@@ -75,7 +75,7 @@ paths:
         '403':
           description: User does not have access to this resource
 
-  /donator/{donator_id}/donationbox:
+  /api-donator/donator/{donator_id}/donationbox:
     get:
       operationId: getDonationbox
       parameters:
@@ -98,7 +98,7 @@ paths:
         - $ref: '#/components/parameters/donatorid'
       tags:
         - Donationbox
-        
+
       requestBody:
         required: true
         content:
@@ -111,7 +111,7 @@ paths:
           description: Donationbox was added successfully.
 
 
-  /donator/{donator_id}/powersupply:
+  /api-donator/{donator_id}/powersupply:
     get:
       operationId: getPowersupply
       parameters:
@@ -134,7 +134,7 @@ paths:
         - $ref: '#/components/parameters/donatorid'
       tags:
         - PowerSupply
-        
+
       requestBody:
         required: true
         content:
@@ -145,8 +145,8 @@ paths:
       responses:
         '201':
           description: Power_Supply was added successfully.
-          
-  /donator/{donator_id}/project:
+
+  /api-donator/{donator_id}/project:
     get:
       operationId: getProjectList
       parameters:
@@ -228,8 +228,8 @@ paths:
               schema:
                 type: object
                 required:
-                - projects
-                - pagination
+                  - projects
+                  - pagination
                 properties:
                   projects:
                     type: array
@@ -239,7 +239,7 @@ paths:
                     $ref: '#/components/schemas/Pagination'
 
 
-  /donator/{donator_id}/ngo:
+  /api-donator/{donator_id}/ngo:
     get:
       operationId: getNgoList
       tags:
@@ -300,18 +300,18 @@ paths:
               schema:
                 type: object
                 required:
-                - ngos
-                - pagination
+                  - ngos
+                  - pagination
                 properties:
                   ngos:
                     type: array
                     items:
                       $ref: '#/components/schemas/NGO'
                   pagination:
-                      $ref: '#/components/schemas/Pagination'
+                    $ref: '#/components/schemas/Pagination'
 
 
-  /donator/{donator_id}/donation:
+  /api-donator/{donator_id}/donation:
     get:
       operationId: getDonationList
       parameters:
@@ -376,7 +376,7 @@ paths:
           in: query
           required: false
           schema:
-              $ref: '#/components/schemas/Sort_Type'
+            $ref: '#/components/schemas/Sort_Type'
         - name: pagination_page
           in: query
           required: false
@@ -387,8 +387,8 @@ paths:
           in: query
           required: false
           schema:
-              type: integer
-              default: 20
+            type: integer
+            default: 20
       tags:
         - Donations
       responses:
@@ -414,14 +414,14 @@ paths:
     post:
       operationId: getToken
       tags:
-      - Token
+        - Token
       requestBody:
         required: true
         content:
           application/x-www-form-urlencoded:
-            schema: 
+            schema:
               $ref: '#/components/schemas/Request_Token'
-      
+
       responses:
         '200':
           description: Returns a Request_Token
@@ -431,12 +431,12 @@ paths:
                 $ref: '#/components/schemas/Response_Token'
         '403':
           description: User does not have access to this resource
-        
-      
-      
+
+
+
 security:
   - OAuth2PasswordBearer: []
-    
+
 components:
 
   parameters:
@@ -452,11 +452,11 @@ components:
     Pagination:
       type: object
       required:
-      - totalResults
-      - filteredResults
-      - currentPage
-      - pageSize
-      - numberOfPages
+        - totalResults
+        - filteredResults
+        - currentPage
+        - pageSize
+        - numberOfPages
       properties:
         totalResults:
           type: integer
@@ -472,10 +472,10 @@ components:
     Donator_Register:
       type: object
       required:
-      - firstname
-      - lastname
-      - password
-      - mail
+        - firstname
+        - lastname
+        - password
+        - mail
       properties:
         firstname:
           type: string
@@ -493,8 +493,8 @@ components:
     Donator_Login:
       type: object
       required:
-      - mail
-      - password
+        - mail
+        - password
       properties:
         mail:
           type: string
@@ -502,7 +502,7 @@ components:
         password:
           type: string
           title: Password
-          
+
     Donator:
       type: object
       required:
@@ -544,23 +544,9 @@ components:
           type: number
           title: Amount
         project:
-          type: object
-          properties:
-            id:
-              type: integer
-              title: Project ID
-            name:
-              type: string
-              title: Project Name
+          $ref: '#/components/schemas/Project_Basic'
         ngo:
-          type: object
-          properties:
-            id:
-              type: integer
-              title: NGO ID
-            name:
-              type: string
-              title: NGO Name
+          $ref: '#/components/schemas/NGO_Basic'
         createdAt:
           type: string
           format: date-time
@@ -594,7 +580,7 @@ components:
           title: Power Consumption
         powerSupplyId:
           type: string
-          title: Power Supply Id 
+          title: Power Supply Id
 
     Donationbox_Register:
       type: object
@@ -606,7 +592,7 @@ components:
           title: cuid
         power_supply_id:
           type: string
-          title: Power Supply Id 
+          title: Power Supply Id
 
     Power_Supply:
       type: object
@@ -639,10 +625,10 @@ components:
         power_surplus:
           type: number
           title: Power Surplus
-        name: 
+        name:
           type: string
           title: Name
-        model_number: 
+        model_number:
           type: string
           title: Model Number
         api_config:
@@ -711,6 +697,32 @@ components:
           type: boolean
           title: Is Favorite
 
+    NGO_Basic:
+      type: object
+      required:
+        - name
+        - id
+      properties:
+        name:
+          type: string
+          title: Name
+        id:
+          type: integer
+          title: ID
+
+    Project_Basic:
+      type: object
+      required:
+        - name
+        - id
+      properties:
+        name:
+          type: string
+          title: Name
+        id:
+          type: integer
+          title: ID
+
     Project:
       type: object
       required:
@@ -718,8 +730,7 @@ components:
         - name
         - description
         - banner_uri
-        - ngo_id
-        - ngo_name
+        - ngo
         - is_favorite
         - fundraising_closed
         - fundraising_goal
@@ -743,12 +754,6 @@ components:
         banner_uri:
           type: string
           title: Banner URI
-        ngo_id:
-          type: integer
-          title: NGO ID
-        ngo_name:
-          type: string
-          title: NGO Name
         is_favorite:
           type: boolean
           title: Is Favorite
@@ -776,9 +781,9 @@ components:
           type: boolean
           title: Is Archived
         category:
-          type: array
-          items:
-            $ref: '#/components/schemas/Project_Category'
+          $ref: '#/components/schemas/Project_Category'
+        ngo:
+          $ref: '#/components/schemas/NGO_Basic'
 
     Project_Category:
       type: string
@@ -801,9 +806,9 @@ components:
       properties:
         grant_type:
           anyOf:
-          - type: string
-            pattern: password
-          - type: 'null'
+            - type: string
+              pattern: password
+            - type: 'null'
           title: Grant Type
         username:
           type: string
@@ -817,18 +822,18 @@ components:
           default: ''
         client_id:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Client Id
         client_secret:
           anyOf:
-          - type: string
-          - type: 'null'
+            - type: string
+            - type: 'null'
           title: Client Secret
       type: object
       required:
-      - username
-      - password
+        - username
+        - password
       title: Request_Token
 
     Response_Token:
@@ -841,10 +846,10 @@ components:
           title: Token Type
       type: object
       required:
-      - access_token
-      - token_type
+        - access_token
+        - token_type
       title: Token
-      
+
   securitySchemes:
     OAuth2PasswordBearer:
       type: oauth2
