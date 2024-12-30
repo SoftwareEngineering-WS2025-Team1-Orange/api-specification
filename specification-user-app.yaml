@@ -476,31 +476,31 @@ components:
     Donator_Register:
       type: object
       required:
-        - firstname
-        - lastname
+        - firstName
+        - lastName
         - password
-        - mail
+        - email
       properties:
-        firstname:
+        firstName:
           type: string
           title: Name
-        lastname:
+        lastName:
           type: string
           title: Name
         password:
           type: string
           title: Password
-        mail:
+        email:
           type: string
           title: Mail
 
     Donator_Login:
       type: object
       required:
-        - mail
+        - email
         - password
       properties:
-        mail:
+        email:
           type: string
           title: Mail
         password:
@@ -510,19 +510,19 @@ components:
     Donator:
       type: object
       required:
-        - firstname
-        - lastname
-        - mail
+        - firstName
+        - lastName
+        - email
         - balance
         - id
       properties:
-        firstname:
+        firstName:
           type: string
           title: Name
-        lastname:
+        lastName:
           type: string
           title: Name
-        mail:
+        email:
           type: string
           title: Mail
         balance:
