@@ -75,7 +75,7 @@ paths:
         '403':
           description: User does not have access to this resource
 
-  /api-donator/donator/{donator_id}/donationbox:
+  /api-donator/donationbox/donator/{donator_id}:
     get:
       operationId: getDonationbox
       parameters:
@@ -111,7 +111,7 @@ paths:
           description: Donationbox was added successfully.
 
 
-  /api-donator/{donator_id}/powersupply:
+  /api-donator/powersupply/donator/{donator_id}:
     get:
       operationId: getPowersupply
       parameters:
@@ -146,7 +146,7 @@ paths:
         '201':
           description: Power_Supply was added successfully.
 
-  /api-donator/{donator_id}/project:
+  /api-donator/project/donator/{donator_id}:
     get:
       operationId: getProjectList
       parameters:
@@ -171,11 +171,6 @@ paths:
           required: false
           schema:
             type: string
-        - name: filter_include_archived
-          in: query
-          required: false
-          schema:
-            type: boolean
         - name: filter_donated_to
           in: query
           required: false
@@ -239,7 +234,7 @@ paths:
                     $ref: '#/components/schemas/Pagination'
 
 
-  /api-donator/{donator_id}/ngo:
+  /api-donator/ngo/donator/{donator_id}:
     get:
       operationId: getNgoList
       tags:
@@ -311,7 +306,7 @@ paths:
                     $ref: '#/components/schemas/Pagination'
 
 
-  /api-donator/{donator_id}/transaction:
+  /api-donator/transaction/donator/{donator_id}:
     get:
       operationId: getTransactionList
       parameters:
@@ -801,7 +796,6 @@ components:
         - fundraising_current
         - progress
         - target_date
-        - is_archived
         - category
         - created_at
 
@@ -841,9 +835,6 @@ components:
         progress:
           type: number
           title: Progress
-        is_archived:
-          type: boolean
-          title: Is Archived
         category:
           $ref: '#/components/schemas/Project_Category'
         ngo:
