@@ -49,6 +49,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Donator'
 
+  /api-donator/donator/me:
+    get:
+      operationId: getDonatorByToken
+      tags:
+        - Donator
+      responses:
+        '200':
+          description: Returning donator object specified by token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donator'
+
   /api-donator/auth/token:
     post:
       operationId: login
