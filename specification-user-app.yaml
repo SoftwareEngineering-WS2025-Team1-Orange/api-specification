@@ -64,27 +64,22 @@ paths:
 
   /api-donator/auth/token:
     post:
-      operationId: login
+      operationId: getToken
       tags:
-        - Donator
+        - Token
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Donator_Login'
+              $ref: '#/components/schemas/Request_Token'
       responses:
         '200':
-          description: Returning donator object
+          description: Returns a Request_Token
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  donator_id:
-                    type: integer
-                  access_token:
-                    $ref: '#/components/schemas/Response_Token'
+                $ref: '#/components/schemas/Response_Token'
         '403':
           description: User does not have access to this resource
 
@@ -422,33 +417,8 @@ paths:
                   pagination:
                     $ref: '#/components/schemas/Pagination'
 
-
-  /token:
-    post:
-      operationId: getToken
-      tags:
-        - Token
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Request_Token'
-
-      responses:
-        '200':
-          description: Returns a Request_Token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response_Token'
-        '403':
-          description: User does not have access to this resource
-
-
-
 security:
-  - OAuth2PasswordBearer: []
+  - OAuth2PasswordBearer: [ ]
 
 components:
 
@@ -502,19 +472,6 @@ components:
         email:
           type: string
           title: Mail
-
-    Donator_Login:
-      type: object
-      required:
-        - email
-        - password
-      properties:
-        email:
-          type: string
-          title: Mail
-        password:
-          type: string
-          title: Password
 
     Donator:
       type: object
@@ -878,10 +835,8 @@ components:
     Request_Token:
       properties:
         grant_type:
-          anyOf:
-            - type: string
-              pattern: password
-            - type: 'null'
+          type: string
+          pattern: password|refresh_token
           title: Grant Type
         username:
           type: string
@@ -905,8 +860,9 @@ components:
           title: Client Secret
       type: object
       required:
-        - username
-        - password
+        - grant_type
+        - client_id
+        - client_secret
       title: Request_Token
 
     Response_Token:
@@ -917,10 +873,15 @@ components:
         token_type:
           type: string
           title: Token Type
+        expires_in:
+          type: integer
+          title: Expires In
+        scope:
+          type: string
+          title: Token Type
       type: object
       required:
         - access_token
-        - token_type
       title: Token
 
   securitySchemes:
@@ -928,5 +889,5 @@ components:
       type: oauth2
       flows:
         password:
-          scopes: {}
-          tokenUrl: token
+          scopes: { }
+          tokenUrl: /api-donator/auth/token
