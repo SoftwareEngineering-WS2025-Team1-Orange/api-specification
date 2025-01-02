@@ -396,6 +396,7 @@ paths:
                 required:
                   - donations
                   - pagination
+                  - earnings
                 properties:
                   donations:
                     type: array
@@ -557,7 +558,7 @@ components:
         - amount
         - createdAt
         - activeTimeInPeriod
-        - donationBoxId
+        - donationBox
         - payout
       properties:
         id:
@@ -573,11 +574,10 @@ components:
         activeTimeInPeriod:
           type: number
           title: Active Time In Period
-        donationBoxId:
-          type: number
-          title: Id of donationbox
         payout:
           $ref: '#/components/schemas/Payout'
+        donationBox:
+          $ref: '#/components/schemas/Donationbox_Basic'
 
     Payout:
       type: object
@@ -600,6 +600,7 @@ components:
         - id
         - cuid
         - last_status
+        - name
       properties:
         id:
           type: integer
@@ -607,6 +608,9 @@ components:
         cuid:
           type: string
           title: cuid
+        name:
+          type: string
+          title: Name
         last_status:
           type: string
           enum:
@@ -636,6 +640,9 @@ components:
         cuid:
           type: string
           title: cuid
+        name:
+          type: string
+          title: Name
 
     Donationbox_Register:
       type: object
@@ -727,7 +734,6 @@ components:
         - id
         - description
         - address
-        - banner_uri
         - is_favorite
         - contact
       properties:
@@ -788,7 +794,6 @@ components:
         - id
         - name
         - description
-        - banner_uri
         - ngo
         - is_favorite
         - fundraising_closed
@@ -797,7 +802,7 @@ components:
         - progress
         - target_date
         - category
-        - created_at
+        - createdAt
 
       properties:
         id:
@@ -825,7 +830,7 @@ components:
           type: string
           format: date
           title: Target Date
-        created_at:
+        createdAt:
           type: string
           format: date-time
           title: Created At
