@@ -55,42 +55,42 @@ paths:
         - NGO
       parameters:
         - name: filter_project_id
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: filter_category
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: filter_name_contains
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: filter_include_archived
-          required: true
+          required: false
           in: query
           schema:
             type: boolean
         - name: pagination_page
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: pagination_page_size
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: sort_for
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: sort_type
-          required: true
+          required: false
           in: query
           schema:
             type: string
@@ -139,42 +139,42 @@ paths:
         - NGO
       parameters:
         - name: filter_project_id
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: filter_category
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: filter_name_contains
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: filter_include_archived
-          required: true
+          required: false
           in: query
           schema:
             type: boolean
         - name: pagination_page
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: pagination_page_size
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: sort_for
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: sort_type
-          required: true
+          required: false
           in: query
           schema:
             type: string
@@ -268,47 +268,47 @@ paths:
           schema:
             type: number
         - name: filter_project_id
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: filter_category
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: filter_name_contains
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: filter_include_archived
-          required: true
+          required: false
           in: query
           schema:
             type: boolean
         - name: filter_ngo_id
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: filter_ngo_name_contains
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: pagination_page
-          required: true
+          required: false
           in: query
           schema:
             type: number
         - name: pagination_page_size
-          required: true
+          required: false
           in: query
           schema:
             type: string
         - name: sort_type
-          required: true
+          required: false
           in: query
           schema:
             type: string
