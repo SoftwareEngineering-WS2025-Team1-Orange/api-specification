@@ -17,6 +17,7 @@ servers:
 paths:
   /token:
     post:
+      operationId: getToken
       tags:
       - Token
       requestBody:
@@ -34,10 +35,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Response_Token'
         '403':
-          description: User does not have access to this resouce 
+          description: User does not have access to this resource
 
   /ngo:
     get:
+      operationId: getAllNGOs
       tags:
       - NGO
       responses:
@@ -50,6 +52,7 @@ paths:
                   $ref: '#/components/schemas/NGO_Get' 
 
     post:
+      operationId: registerNGO
       tags:
       - NGO 
       requestBody:
@@ -64,6 +67,7 @@ paths:
 
   /ngo/me:
     get:
+      operationId: getCurrentNGO
       tags:
         - NGO
       responses:
@@ -83,6 +87,7 @@ paths:
           type: number
 
     get:
+      operationId: getNGOByID
       tags:
       - NGO
       responses:
@@ -96,6 +101,7 @@ paths:
                   $ref: '#/components/schemas/NGO_Get' 
 
     put:
+      operationId: updateNGO
       tags:
       - NGO 
       requestBody:
@@ -116,6 +122,7 @@ paths:
         - OAuth2PasswordBearer: [] 
     
     delete:
+      operationId: deleteNGO
       tags:
       - NGO 
       responses:
@@ -134,6 +141,7 @@ paths:
           type: number
 
     get:
+      operationId: getAllProjects
       tags:
         - Project 
       responses:
@@ -149,6 +157,7 @@ paths:
         - OAuth2PasswordBearer: []
 
     post:
+      operationId: addProject
       tags:
         - Project
       requestBody:
@@ -174,6 +183,7 @@ paths:
           type: number
 
     get:
+      operationId: getProject
       tags:
         - Project 
       responses:
@@ -189,6 +199,7 @@ paths:
         - OAuth2PasswordBearer: []
       
     delete:
+      operationId: deleteProject
       tags:
         - Project 
       responses:
@@ -211,6 +222,7 @@ paths:
         schema:
           type: number
     patch:
+      operationId: updateDescription
       tags:
         - Project 
       requestBody:
@@ -239,6 +251,7 @@ paths:
         schema:
           type: number
     patch:
+      operationId: updateImages
       tags:
         - Project 
       requestBody:
@@ -283,6 +296,7 @@ paths:
         schema:
           type: number
     get:
+      operationId: getDonations
       tags:
         - Donations 
       responses:
@@ -311,6 +325,7 @@ paths:
           type: number
           
     post:
+      operationId: addSpending
       tags: 
         - Spendings
       requestBody:
@@ -323,6 +338,7 @@ paths:
           - OAuth2PasswordBearer: []
 
     get:
+      operationId: getSpendings
       tags:
         - Spendings
       responses:
