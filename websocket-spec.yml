@@ -32,10 +32,21 @@ channels:
           $ref: '#/components/schemas/AuthResponse'
 
   containerStatusUpdate:
-    description: "Regular status of running containers requested by the Mainframe from the Donation Box."
+    description: "Regular status of selected containers requested by the Mainframe from the Donation Box."
     publish:
       operationId: 'containerStatusRequest'
-      description: "Mainframe requests containers status update from DonationBox"
+      description: "Mainframe requests status update of selected from DonationBox"
+      message:
+        contentType: 'application/json'
+        payload:
+            type: 'object'
+            properties:
+                containerNames:
+                type: 'array'
+                items:
+                    type: 'string'
+            required:
+                - containerNames
     subscribe:
       operationId: 'containerStatusUpdate'
       message:
@@ -129,6 +140,10 @@ components:
           abortedContainers: 
             type: array
             items: 
+              type: string
+          notFoundContainers:
+            type: array
+            items:
               type: string
 
     SolarStatusUpdateResponse:
