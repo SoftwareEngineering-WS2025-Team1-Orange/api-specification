@@ -234,6 +234,7 @@ components:
             - 'ERR_connection_to_mining_pool_failed'
             - 'ERR_authentication_on_mining_pool_failed'
             - 'ERR_other'
+            - 'ERR_container_already_running'
 
     StopMiningResponse:
       type: object
