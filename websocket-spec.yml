@@ -100,8 +100,49 @@ channels:
         payload:
           $ref: '#/components/schemas/StopMiningResponse'
 
+    addConfig:
+      description: "Request to deploy the plugin container with a config and save the corresponding password"
+      publish:
+        operationId: 'addConfigurationCommand'
+        description: 'Mainframe orders Donation Box to deploy the plugin container with a config and save the corresponding password'
+        message:
+          contentType: 'application/json'
+          payload:
+            $ref: '#/components/schemas/AddConfigurationRequest'
+
+      subscribe:
+        operationId: 'addConfiguration'
+        message:
+          contentType: 'application/json'
+          payload:
+            $ref: '#/components/schemas/AddConfigurationResponse'
+
+
 components:
   schemas:
+    AddConfigurationRequest:
+        type: object
+        properties:
+            pluginContainerName:
+                type: string
+            user:
+                type: str
+            password:
+                type: str
+            serial:
+                type: str
+            config:
+              type: object
+              additionalProperties: true
+            passkey:
+              type: string
+
+    AddConfigurationResponse:
+        type: object
+        properties:
+            success:
+                type: boolean
+
     AuthRequest:
       type: object
       properties:
