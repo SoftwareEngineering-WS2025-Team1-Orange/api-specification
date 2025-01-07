@@ -108,7 +108,7 @@ channels:
         message:
           contentType: 'application/json'
           payload:
-            $ref: '#/components/schemas/AddConfigurationRequest'
+            $ref: '#/components/schemas/StartContainerRequest'
 
       subscribe:
         operationId: 'addConfiguration'
@@ -120,28 +120,16 @@ channels:
 
 components:
   schemas:
-    AddConfigurationRequest:
-        type: object
-        properties:
-            pluginContainerName:
-                type: string
-            user:
-                type: str
-            password:
-                type: str
-            serial:
-                type: str
-            config:
-              type: object
-              additionalProperties: true
-            passkey:
-              type: string
-
     AddConfigurationResponse:
-        type: object
-        properties:
-            success:
-                type: boolean
+      type: object
+      properties:
+        success:
+          type: boolean
+        response:
+          type: string
+          enum:
+            - 'success'
+            - 'failure'
 
     AuthRequest:
       type: object
@@ -245,7 +233,7 @@ components:
         - house
         - wallbox
 
-    StartMiningRequest:
+    StartContainerRequest:
       type: object
       properties:
         imageName:
