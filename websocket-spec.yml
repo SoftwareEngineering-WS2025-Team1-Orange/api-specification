@@ -31,17 +31,40 @@ channels:
         payload:
           $ref: '#/components/schemas/AuthResponse'
 
-  statusUpdate:
-    description: "Regular status requested by the Mainframe from the Donation Box."
+  containerStatusUpdate:
+    description: "Regular status of selected containers requested by the Mainframe from the Donation Box."
     publish:
-      operationId: 'statusRequest'
-      description: "Mainframe requests status update from DonationBox"
-    subscribe:
-      operationId: 'statusUpdate'
+      operationId: 'containerStatusRequest'
+      description: "Mainframe requests status update of selected from DonationBox"
       message:
         contentType: 'application/json'
         payload:
-          $ref: '#/components/schemas/StatusUpdateResponse'
+            type: 'object'
+            properties:
+                containerNames:
+                type: 'array'
+                items:
+                    type: 'string'
+            required:
+                - containerNames
+    subscribe:
+      operationId: 'containerStatusUpdate'
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/ContainerStatusUpdateResponse'
+
+  solarStatusUpdate:
+    description: "Regular status of the solar system requested by the Mainframe from the Donation Box."
+    publish:
+      operationId: 'solarStatusRequest'
+      description: "Mainframe requests solar system status update from DonationBox"
+    subscribe:
+      operationId: 'solarStatusUpdate'
+      message:
+        contentType: 'application/json'
+        payload:
+          $ref: '#/components/schemas/SolarStatusUpdateResponse'
 
   startMining:
     description: "Request to start mining, sent by the Mainframe."
@@ -77,8 +100,37 @@ channels:
         payload:
           $ref: '#/components/schemas/StopMiningResponse'
 
+    addConfig:
+      description: "Request to deploy the plugin container with a config and save the corresponding password"
+      publish:
+        operationId: 'addConfigurationCommand'
+        description: 'Mainframe orders Donation Box to deploy the plugin container with a config and save the corresponding password'
+        message:
+          contentType: 'application/json'
+          payload:
+            $ref: '#/components/schemas/StartContainerRequest'
+
+      subscribe:
+        operationId: 'addConfiguration'
+        message:
+          contentType: 'application/json'
+          payload:
+            $ref: '#/components/schemas/AddConfigurationResponse'
+
+
 components:
   schemas:
+    AddConfigurationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        response:
+          type: string
+          enum:
+            - 'success'
+            - 'failure'
+
     AuthRequest:
       type: object
       properties:
@@ -98,10 +150,14 @@ components:
             - 'success'
             - 'failure'
 
-    StatusUpdateResponse:
+    ContainerStatusUpdateResponse:
       type: object
       properties:
         response:
+          time:
+            type: string
+            format: date-time
+            description: Timestamp of the poll.
           runningContainers: 
             type: array
             items: 
@@ -114,8 +170,70 @@ components:
             type: array
             items: 
               type: string
+          notFoundContainers:
+            type: array
+            items:
+              type: string
 
-    StartMiningRequest:
+    SolarStatusUpdateResponse:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          description: Timestamp of the poll.
+        sysStatus:
+          type: integer
+          description: System status code.
+        stateOfCharge:
+          type: integer
+          description: Current state of charge.
+        production:
+          $ref: '#/components/schemas/Production'
+        consumption:
+          $ref: '#/components/schemas/Consumption'
+      required:
+        - time
+        - sysStatus
+        - stateOfCharge
+        - production
+        - consumption
+
+    Production:
+      type: object
+      properties:
+        solar:
+          type: integer
+          description: Solar production value.
+        add:
+          type: integer
+          description: Additional production value.
+        grid:
+          type: integer
+          description: Grid production value.
+      required:
+        - solar
+        - add
+        - grid
+
+    Consumption:
+      type: object
+      properties:
+        battery:
+          type: integer
+          description: Battery consumption value.
+        house:
+          type: integer
+          description: House consumption value.
+        wallbox:
+          type: integer
+          description: Wallbox consumption value.
+      required:
+        - battery
+        - house
+        - wallbox
+
+    StartContainerRequest:
       type: object
       properties:
         imageName:
@@ -145,6 +263,7 @@ components:
             - 'ERR_connection_to_mining_pool_failed'
             - 'ERR_authentication_on_mining_pool_failed'
             - 'ERR_other'
+            - 'ERR_container_already_running'
 
     StopMiningResponse:
       type: object
