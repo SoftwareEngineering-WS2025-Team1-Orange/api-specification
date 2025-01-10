@@ -76,8 +76,12 @@ paths:
       tags:
         - Donator
       responses:
-        '200':
-          description: Donator was deleted successfully.
+        '204':
+          description: No Content
+        '400':
+          description: Cannot delete donator with remaining balance. Please spend all funds before deletion.
+        '404':
+          description: Donator not found ready for deletion. Either he does not exist, is already deleted or still has donation boxes associated with him.
 
   /api-donator/donator/me:
     get:
@@ -370,7 +374,7 @@ paths:
 
 
   /api-donator/project/{project_id}/donator/{donator_id}/favorite:
-    post:
+    put:
       operationId: favoriteProject
       parameters:
         - $ref: '#/components/parameters/projectid'
@@ -387,7 +391,7 @@ paths:
                 favorite:
                   type: boolean
       responses:
-        '201':
+        '200':
           description: Favorite was added successfully.
           content:
             application/json:
@@ -468,7 +472,7 @@ paths:
 
 
   /api-donator/ngo/{ngo_id}/donator/{donator_id}/favorite:
-    post:
+    put:
       operationId: favoriteNgo
       parameters:
         - $ref: '#/components/parameters/ngoid'
@@ -485,7 +489,7 @@ paths:
                 favorite:
                   type: boolean
       responses:
-        '201':
+        '200':
           description: Favorite was added successfully.
           content:
             application/json:
