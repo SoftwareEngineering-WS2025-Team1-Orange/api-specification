@@ -836,9 +836,16 @@ components:
           items:
             type: string
             enum:
-              - NOT_IMPLEMENTED
+              - READ_NGO
+              - WRITE_NGO
+              - READ_PROJECT
+              - WRITE_PROJECT
           title: scope
-          default: [ ]
+          default:
+            - READ_NGO
+            - WRITE_NGO
+            - READ_PROJECT
+            - WRITE_PROJECT
         client_id:
           anyOf:
             - type: string
@@ -864,17 +871,9 @@ components:
         token_type:
           type: string
           title: Token Type
-        expires_in:
+        expires_at:
           type: integer
-          title: Expires In
-        scope:
-          type: array
-          items:
-            type: string
-            enum:
-              - NOT_IMPLEMENTED
-          title: scope
-          default: [ ]
+          title: Expires At
       type: object
       required:
         - access_token
