@@ -1094,19 +1094,11 @@ components:
               - READ_DONATIONBOX
               - WRITE_DONATIONBOX
               - READ_DONATOR
+              - WRITE_DONATOR
               - READ_NGO
               - READ_PROJECT
               - READ_TRANSACTION
           title: scope
-          default:
-            - READ_DONATION
-            - WRITE_DONATION
-            - READ_DONATIONBOX
-            - WRITE_DONATIONBOX
-            - READ_DONATOR
-            - READ_NGO
-            - READ_PROJECT
-            - READ_TRANSACTION
         client_id:
           anyOf:
             - type: string
