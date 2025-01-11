@@ -832,9 +832,7 @@ components:
         scope:
           type: array
           items:
-            type: string
-            enum:
-              - NOT_IMPLEMENTED
+            $ref: '#/components/schemas/Scope'
           title: scope
           default: [ ]
         client_id:
@@ -868,15 +866,21 @@ components:
         scope:
           type: array
           items:
-            type: string
-            enum:
-              - NOT_IMPLEMENTED
+            $ref: '#/components/schemas/Scope'
           title: scope
           default: [ ]
       type: object
       required:
         - access_token
       title: Token
+
+    Scope:
+      type: string
+      enum:
+        - WRITE_PROJECT
+        - READ_PROJECT
+        - WRITE_NGO
+        - READ_NGO
 
   securitySchemes:
     OAuth2PasswordBearer:
