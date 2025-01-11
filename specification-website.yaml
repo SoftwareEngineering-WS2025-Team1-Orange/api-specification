@@ -55,42 +55,34 @@ paths:
         - NGO
       parameters:
         - name: filter_project_id
-          required: true
           in: query
           schema:
             type: number
         - name: filter_category
-          required: true
           in: query
           schema:
             type: string
         - name: filter_name_contains
-          required: true
           in: query
           schema:
             type: string
         - name: filter_include_archived
-          required: true
           in: query
           schema:
             type: boolean
         - name: pagination_page
-          required: true
           in: query
           schema:
             type: number
         - name: pagination_page_size
-          required: true
           in: query
           schema:
             type: number
         - name: sort_for
-          required: true
           in: query
           schema:
             type: string
         - name: sort_type
-          required: true
           in: query
           schema:
             type: string
@@ -834,9 +826,7 @@ components:
         scope:
           type: array
           items:
-            type: string
-            enum:
-              - NOT_IMPLEMENTED
+            $ref: '#/components/schemas/Scope'
           title: scope
           default: [ ]
         client_id:
@@ -870,15 +860,21 @@ components:
         scope:
           type: array
           items:
-            type: string
-            enum:
-              - NOT_IMPLEMENTED
+            $ref: '#/components/schemas/Scope'
           title: scope
           default: [ ]
       type: object
       required:
         - access_token
       title: Token
+
+    Scope:
+      type: string
+      enum:
+        - WRITE_PROJECT
+        - READ_PROJECT
+        - WRITE_NGO
+        - READ_NGO
 
   securitySchemes:
     OAuth2PasswordBearer:
