@@ -39,6 +39,7 @@ paths:
       operationId: getDonator
       parameters:
         - $ref: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/force_earnings_update'
       tags:
         - Donator
       responses:
@@ -143,7 +144,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Donationbox'
 
-    post:
+    put:
       operationId: registerDonationbox
       parameters:
         - $ref: '#/components/parameters/donatorid'
@@ -176,9 +177,9 @@ paths:
             schema:
               type: object
               properties:
-                amount:
+                amountInCent:
                   type: number
-                  title: Amount
+                  title: Amount in cent	
 
       responses:
         '201':
@@ -218,7 +219,7 @@ paths:
             schema:
               type: object
               properties:
-                amount:
+                amountInCent:
                   type: number
 
       responses:
@@ -502,6 +503,7 @@ paths:
       operationId: getTransactionList
       parameters:
         - $ref: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/force_earnings_update'
         - name: filter_donation_ngo_id
           in: query
           required: false
@@ -558,6 +560,7 @@ paths:
             enum:
               - amount
               - created_at
+              - created_at_or_timestamp #Default sort field. Sorts donations by created_at and payouts by timestamp. Makes sense because payouts are fetched periodically and thus there can be identical created_at values for different timestamps
         - name: sort_type
           in: query
           required: false
@@ -624,9 +627,15 @@ components:
       required: true
       schema:
         type: integer
+    force_earnings_update:
+      name: force_earnings_update
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
 
   schemas:
-
     Pagination:
       type: object
       required:
@@ -713,16 +722,16 @@ components:
       type: object
       required:
         - id
-        - amount
+        - amountInCent
         - ngo
         - createdAt
       properties:
         id:
           type: integer
           title: ID
-        amount:
+        amountInCent:
           type: number
-          title: Amount
+          title: Amount in cent
         project:
           $ref: '#/components/schemas/Project_Basic'
         ngo:
@@ -736,41 +745,49 @@ components:
       type: object
       required:
         - id
-        - amount
+        - amountInCent
         - createdAt
         - activeTimeInPeriod
         - donationBox
-        - payout
+        - moneroMiningPayout
+        - payoutType
+        - payoutTimestamp
       properties:
         id:
           type: integer
           title: ID
-        amount:
+        amountInCent:
           type: number
-          title: Amount
+          title: Amount in cent
         createdAt:
           type: string
           format: date-time
           title: Created At
-        activeTimeInPeriod:
-          type: number
-          title: Active Time In Period
-        payout:
-          $ref: '#/components/schemas/Payout'
+        payoutType:
+          type: string
+          enum:
+            - MONERO_MINING
+          title: Payout Type
+        payoutTimestamp:
+          type: string
+          format: date-time
+          title: Payout Timestamp
+        moneroMiningPayout:
+          $ref: '#/components/schemas/MoneroMiningPayoutBasic'
         donationBox:
           $ref: '#/components/schemas/Donationbox_Basic'
 
-    Payout:
+    MoneroMiningPayoutBasic:
       type: object
       required:
-        - periodStart
-        - periodEnd
+        - timestamp
+        - lastPayoutTimestamp
       properties:
-        periodStart:
+        timestamp:
           type: string
           format: date-time
           title: Period Start
-        periodEnd:
+        lastPayoutTimestamp:
           type: string
           format: date-time
           title: Period End
@@ -781,6 +798,8 @@ components:
         - id
         - cuid
         - last_status
+        - earningsLastSuccessfullUpdateAt,
+        - earningsLastUpdateSuccessfull
         - name
       properties:
         id:
@@ -799,8 +818,18 @@ components:
             - ERROR
             - CONNECTED # SYSTEM IS UP BUT NO SURPLUS POWER AVAILABLE
             - READY     # SYSTEM IS READY AND SURPLUS POWER IS AVAILABLE
-            - WORKING  # IS RUNNING TASK
+            - WORKING   # IS RUNNING TASK
           title: Last Status
+        earningsLastSuccessfullUpdateAt:
+          type: string
+          format: date-time
+          title: Earnings Last Successfull Update At
+        earningsLastUpdateSuccessfull:
+          type: boolean
+          title: Earnings Last Update Successfull
+        power_surplus:
+          type: number
+          title: Power Surplus
         power_consumption:
           type: number
           title: Power Consumption
@@ -845,14 +874,14 @@ components:
       type: object
       required:
         - id
-        - amount
+        - amountInCent
         - createdAt
         - ngo
         - newBalance
       properties:
         id:
           type: integer
-        amount:
+        amountInCent:
           type: number
         createdAt:
           type: string
