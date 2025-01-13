@@ -994,11 +994,9 @@ components:
             - Social
             - OTHER
           title: Category
-      required:
-        - name
-        - description
-        - category
-        - fundraising_goal
+        progress:
+          type: number
+          title: Progress
 
     DonationGet:
       type: object
