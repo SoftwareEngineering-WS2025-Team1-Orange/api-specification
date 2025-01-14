@@ -1,0 +1,124 @@
+openapi: 3.0.3
+info:
+  title: Solar Plugin API
+  description: API for configuring and polling data from an solar system.
+  version: 1.0.0
+paths:
+  /load_config:
+    post:
+      summary: Load configuration for solar system
+      description: Validates the passkey and configures the service.
+      operationId: loadConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PluginConfig'
+      responses:
+        '201':
+          description: Configuration loaded successfully.
+      tags:
+        - Configuration
+  /poll:
+    post:
+      summary: Poll data from solar system
+      description: Validates the passkey and retrieves polling data from the service.
+      operationId: poll
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PluginConfig'
+      responses:
+        '200':
+          description: Polling data retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollResponse'
+      tags:
+        - Polling
+components:
+  schemas:
+    PluginConfig:
+      type: object
+      properties:
+        user:
+          type: string
+          description: Username for the system.
+        password:
+          type: string
+          description: Password for the system.
+        serial:
+          type: string
+          description: Serial number of the device.
+        config:
+          type: object
+          description: Configuration dictionary for specific settings.
+          additionalProperties: true
+          default: {}
+        passkey:
+          type: string
+          description: Passkey for authentication.
+      required:
+        - user
+        - password
+        - serial
+        - passkey
+    Production:
+      type: object
+      properties:
+        solar:
+          type: integer
+          description: Solar production value.
+        add:
+          type: integer
+          description: Additional production value.
+        grid:
+          type: integer
+          description: Grid production value.
+      required:
+        - solar
+        - add
+        - grid
+    Consumption:
+      type: object
+      properties:
+        battery:
+          type: integer
+          description: Battery consumption value.
+        house:
+          type: integer
+          description: House consumption value.
+        wallbox:
+          type: integer
+          description: Wallbox consumption value.
+      required:
+        - battery
+        - house
+        - wallbox
+    PollResponse:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          description: Timestamp of the poll.
+        sysStatus:
+          type: integer
+          description: System status code.
+        stateOfCharge:
+          type: integer
+          description: Current state of charge.
+        production:
+          $ref: '#/components/schemas/Production'
+        consumption:
+          $ref: '#/components/schemas/Consumption'
+      required:
+        - time
+        - sysStatus
+        - stateOfCharge
+        - production
+        - consumption
