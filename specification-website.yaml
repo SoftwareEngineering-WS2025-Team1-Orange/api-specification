@@ -720,9 +720,7 @@ components:
           title: scope
           default: [ ]
         projects:
-          type: array
-          items:
-            $ref: '#/components/schemas/PaginatedProject'
+          $ref: '#/components/schemas/PaginatedProject'
 
     UpdateNGO:
       type: object
