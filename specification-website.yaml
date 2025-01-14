@@ -832,9 +832,18 @@ components:
         scope:
           type: array
           items:
-            $ref: '#/components/schemas/Scope'
+            type: string
+            enum:
+              - READ_NGO
+              - WRITE_NGO
+              - READ_PROJECT
+              - WRITE_PROJECT
           title: scope
-          default: [ ]
+          default:
+            - READ_NGO
+            - WRITE_NGO
+            - READ_PROJECT
+            - WRITE_PROJECT
         client_id:
           anyOf:
             - type: string
@@ -860,27 +869,13 @@ components:
         token_type:
           type: string
           title: Token Type
-        expires_in:
+        expires_at:
           type: integer
-          title: Expires In
-        scope:
-          type: array
-          items:
-            $ref: '#/components/schemas/Scope'
-          title: scope
-          default: [ ]
+          title: Expires At
       type: object
       required:
         - access_token
       title: Token
-
-    Scope:
-      type: string
-      enum:
-        - WRITE_PROJECT
-        - READ_PROJECT
-        - WRITE_NGO
-        - READ_NGO
 
   securitySchemes:
     OAuth2PasswordBearer:

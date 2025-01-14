@@ -49,6 +49,40 @@ paths:
               schema:
                 $ref: '#/components/schemas/Donator'
 
+    put:
+      operationId: updateDonator
+      parameters:
+        - $ref: '#/components/parameters/donatorid'
+      tags:
+        - Donator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Donator_Update'
+      responses:
+        '200':
+          description: Donator was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Donator'
+
+    delete:
+      operationId: deleteDonator
+      parameters:
+        - $ref: '#/components/parameters/donatorid'
+      tags:
+        - Donator
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Cannot delete donator with remaining balance. Please spend all funds before deletion.
+        '404':
+          description: Donator not found ready for deletion. Either he does not exist, is already deleted or still has donation boxes associated with him.
+
   /api-donator/donator/me:
     get:
       operationId: getDonatorByToken
@@ -126,6 +160,93 @@ paths:
       responses:
         '201':
           description: Donationbox was added successfully.
+
+  /api-donator/donation/donator/{donator_id}/ngo/{ngo_id}:
+    post:
+      operationId: donateToNgo
+      parameters:
+        - $ref: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/ngoid'
+      tags:
+        - Donation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  title: Amount
+
+      responses:
+        '201':
+          description: Donation was added successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Donation_Response'
+                  - type: object
+                    properties:
+                      project:
+                        type: object
+                        required:
+                          - name
+                          - id
+                        properties:
+                          name:
+                            type: string
+                          id:
+                            type: integer
+        '400':
+          description: Amount was negative or balance was insufficient
+
+  /api-donator/donation/donator/{donator_id}/project/{project_id}:
+    post:
+      operationId: donateToProject
+      parameters:
+        - $ref: '#/components/parameters/donatorid'
+        - $ref: '#/components/parameters/projectid'
+      tags:
+        - Donation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+
+      responses:
+        '201':
+          description: Donation was added successfully.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Donation_Response'
+                  - type: object
+                    required:
+                      - project
+                    properties:
+                      project:
+                        type: object
+                        required:
+                          - name
+                          - id
+                        properties:
+                          name:
+                            type: string
+                          id:
+                            type: integer
+        '400':
+          description: Amount was negative or balance was insufficient
+
+  
 
 
   /api-donator/powersupply/donator/{donator_id}:
@@ -251,6 +372,33 @@ paths:
                     $ref: '#/components/schemas/Pagination'
 
 
+
+  /api-donator/project/{project_id}/donator/{donator_id}/favorite:
+    put:
+      operationId: favoriteProject
+      parameters:
+        - $ref: '#/components/parameters/projectid'
+        - $ref: '#/components/parameters/donatorid'
+      tags:
+        - Donator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                favorite:
+                  type: boolean
+      responses:
+        '200':
+          description: Favorite was added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+
   /api-donator/ngo/donator/{donator_id}:
     get:
       operationId: getNgoList
@@ -321,6 +469,32 @@ paths:
                       $ref: '#/components/schemas/NGO'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
+
+
+  /api-donator/ngo/{ngo_id}/donator/{donator_id}/favorite:
+    put:
+      operationId: favoriteNgo
+      parameters:
+        - $ref: '#/components/parameters/ngoid'
+        - $ref: '#/components/parameters/donatorid'
+      tags:
+        - Donator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                favorite:
+                  type: boolean
+      responses:
+        '200':
+          description: Favorite was added successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NGO'
 
 
   /api-donator/transaction/donator/{donator_id}:
@@ -438,6 +612,18 @@ components:
       required: true
       schema:
         type: integer
+    ngoid:
+      name: ngo_id
+      in: path
+      required: true
+      schema:
+        type: integer
+    projectid:
+      name: project_id
+      in: path
+      required: true
+      schema:
+        type: integer
 
   schemas:
 
@@ -506,6 +692,22 @@ components:
         id:
           type: integer
           title: ID
+
+    Donator_Update:
+      type: object
+      properties:
+        firstName:
+          type: string
+          title: Name
+        lastName:
+          type: string
+          title: Name
+        email:
+          type: string
+          title: Mail
+        password:
+          type: string
+          title: Password
 
     Donation:
       type: object
@@ -638,6 +840,35 @@ components:
         power_supply_id:
           type: string
           title: Power Supply Id
+
+    Donation_Response:
+      type: object
+      required:
+        - id
+        - amount
+        - createdAt
+        - ngo
+        - newBalance
+      properties:
+        id:
+          type: integer
+        amount:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        ngo:
+          type: object
+          required:
+            - name
+            - id
+          properties:
+            name:
+              type: string
+            id:
+              type: integer
+        newBalance:
+          type: number
 
     Power_Supply:
       type: object
@@ -854,9 +1085,20 @@ components:
           type: string
           title: Password
         scope:
-          type: string
-          title: Scope
-          default: ''
+          type: array
+          items:
+            type: string
+            enum:
+              - READ_DONATION
+              - WRITE_DONATION
+              - READ_DONATIONBOX
+              - WRITE_DONATIONBOX
+              - READ_DONATOR
+              - WRITE_DONATOR
+              - READ_NGO
+              - READ_PROJECT
+              - READ_TRANSACTION
+          title: scope
         client_id:
           anyOf:
             - type: string
@@ -882,12 +1124,9 @@ components:
         token_type:
           type: string
           title: Token Type
-        expires_in:
+        expires_at:
           type: integer
-          title: Expires In
-        scope:
-          type: string
-          title: Token Type
+          title: Expires At
       type: object
       required:
         - access_token
