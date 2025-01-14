@@ -34,6 +34,7 @@ paths:
               schema:
                 type: integer
 
+
   /api-donator/donator/{donator_id}:
     get:
       operationId: getDonator
@@ -162,6 +163,22 @@ paths:
         '201':
           description: Donationbox was added successfully.
 
+
+  /api-donationbox/sendConfig:
+    post:
+      operationId: sendConfig
+      tags:
+        - Donationbox
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Donationbox_SendConfig'
+      responses:
+        '201':
+          description: Config was sent successfully.
+
   /api-donator/donation/donator/{donator_id}/ngo/{ngo_id}:
     post:
       operationId: donateToNgo
@@ -178,7 +195,7 @@ paths:
               type: object
               properties:
                 amountInCent:
-                  type: number
+                  type: integer
                   title: Amount in cent	
 
       responses:
@@ -220,7 +237,7 @@ paths:
               type: object
               properties:
                 amountInCent:
-                  type: number
+                  type: integer
 
       responses:
         '201':
@@ -730,7 +747,7 @@ components:
           type: integer
           title: ID
         amountInCent:
-          type: number
+          type: integer
           title: Amount in cent
         project:
           $ref: '#/components/schemas/Project_Basic'
@@ -757,7 +774,7 @@ components:
           type: integer
           title: ID
         amountInCent:
-          type: number
+          type: integer
           title: Amount in cent
         createdAt:
           type: string
@@ -870,6 +887,37 @@ components:
           type: string
           title: Power Supply Id
 
+    Donationbox_SendConfig:
+      type: object
+      required:
+        - pluginName
+        - cuid
+        - config
+      properties:
+        pluginName:
+          type: string
+          title: Plugin Name
+        cuid:
+          type: string
+          title: cuid
+        config:
+          type: object
+          title: Config
+          required:
+            - e3dc_user
+            - e3dc_password
+            - e3dc_serial
+          properties:
+            e3dc_user:
+              type: string
+              title: E3DC User
+            e3dc_password:
+              type: string
+              title: E3DC Password
+            e3dc_serial:
+              type: string
+              title: E3DC Serial
+
     Donation_Response:
       type: object
       required:
@@ -882,7 +930,7 @@ components:
         id:
           type: integer
         amountInCent:
-          type: number
+          type: integer
         createdAt:
           type: string
           format: date-time
