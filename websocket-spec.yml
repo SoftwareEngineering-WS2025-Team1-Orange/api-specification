@@ -34,10 +34,10 @@ channels:
   statusUpdate:
     description: "Regular status requested by the Mainframe from the Donation Box."
     publish:
-      operationId: 'statusRequest'
+      operationId: 'statusUpdateRequest'
       description: "Mainframe requests status update from DonationBox"
     subscribe:
-      operationId: 'statusUpdate'
+      operationId: 'statusUpdateResponse'
       message:
         contentType: 'application/json'
         payload:
@@ -46,7 +46,7 @@ channels:
   startContainer:
     description: "Request to start container, sent by the Mainframe."
     publish:
-      operationId: 'startContainerCommand'
+      operationId: 'startContainerRequest'
       description: "Mainframe orders Donation Box to start container"
       message:
         contentType: 'application/json'
@@ -63,7 +63,7 @@ channels:
   stopContainer:
     description: "Request to stop container, sent by the Mainframe."
     publish:
-      operationId: 'stopContainerCommand'
+      operationId: 'stopContainerRequest'
       description: 'Mainframe orders Donation Box to stop container'
       message:
         contentType: 'application/json'
@@ -80,34 +80,34 @@ channels:
   addConfig:
     description: "Request to deploy the plugin container with a config and save the corresponding password"
     publish:
-      operationId: 'addConfigurationCommand'
-      description: 'Mainframe orders Donation Box to deploy the plugin container with a config and save the corresponding password'
+      operationId: 'addConfigurationRequest'
       message:
         contentType: 'application/json'
         payload:
-          $ref: '#/components/schemas/StartContainerRequest'
+          $ref: '#/components/schemas/AddConfigurationRequest'
 
+  addError:
+    description: "Channel for sending container error messages from donationbox to mainframe"
     subscribe:
-      operationId: 'addConfiguration'
+      operationId: 'addErrorResponse'
       message:
         contentType: 'application/json'
         payload:
-          $ref: '#/components/schemas/AddConfigurationResponse'
+          $ref: '#/components/schemas/ContainerStatus'
+
+  
 
 
 components:
   schemas:
-    AddConfigurationResponse:
+    AddConfigurationRequest:
       type: object
       properties:
-        success:
-          type: boolean
-        response:
+        plugin_image_name:
           type: string
-          enum:
-            - 'success'
-            - 'failure'
-
+        plugin_configuration:
+          type: object
+  
     AuthRequest:
       type: object
       properties:
@@ -125,6 +125,23 @@ components:
           type: array
           item:
             type: string
+
+    ContainerStatus:
+      type: object
+      properties:
+        containerName:
+          type: string
+        statusCode:
+          type: integer
+        statusMsg:
+          enum: 
+            - 'RUNNING'
+            - 'FINISHED'
+            - 'CRASHED'
+            - 'NOT_FOUND'
+            - 'ERROR'
+            - 'OK'
+            - 'PENDING'
 
     StatusUpdateResponse:
       type: object
@@ -159,18 +176,7 @@ components:
         container:
           type: array
           item:
-            type: object
-            properties:
-              container_name:
-                type: string
-              container_status:
-                type: string
-                enum: 
-                  - 'RUNNING'
-                  - 'FINISHED'
-                  - 'CRASHED'
-                  - 'NOT_FOUND'
-                  - 'ERROR'
+            $ref: '#/components/schemas/ContainerStatus'   
 
     StartContainerRequest:
       type: object
