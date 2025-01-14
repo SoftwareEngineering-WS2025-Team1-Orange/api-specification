@@ -178,7 +178,7 @@ paths:
               type: object
               properties:
                 amountInCent:
-                  type: number
+                  type: integer
                   title: Amount in cent	
 
       responses:
@@ -220,7 +220,7 @@ paths:
               type: object
               properties:
                 amountInCent:
-                  type: number
+                  type: integer
 
       responses:
         '201':
@@ -730,7 +730,7 @@ components:
           type: integer
           title: ID
         amountInCent:
-          type: number
+          type: integer
           title: Amount in cent
         project:
           $ref: '#/components/schemas/Project_Basic'
@@ -757,7 +757,7 @@ components:
           type: integer
           title: ID
         amountInCent:
-          type: number
+          type: integer
           title: Amount in cent
         createdAt:
           type: string
@@ -797,8 +797,6 @@ components:
       required:
         - id
         - cuid
-        - last_status
-        - earningsLastSuccessfullUpdateAt,
         - earningsLastUpdateSuccessfull
         - name
       properties:
@@ -811,15 +809,8 @@ components:
         name:
           type: string
           title: Name
-        last_status:
+        lastSolarStatus:
           type: string
-          enum:
-            - OFFLINE
-            - ERROR
-            - CONNECTED # SYSTEM IS UP BUT NO SURPLUS POWER AVAILABLE
-            - READY     # SYSTEM IS READY AND SURPLUS POWER IS AVAILABLE
-            - WORKING   # IS RUNNING TASK
-          title: Last Status
         earningsLastSuccessfullUpdateAt:
           type: string
           format: date-time
@@ -882,7 +873,7 @@ components:
         id:
           type: integer
         amountInCent:
-          type: number
+          type: Integer
         createdAt:
           type: string
           format: date-time
