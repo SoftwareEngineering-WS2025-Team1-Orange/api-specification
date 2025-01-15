@@ -32,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
+                $ref: '#/components/schemas/Donator'
 
 
   /api-donator/donator/{donator_id}:
@@ -858,7 +858,7 @@ components:
           type: string
           format: date-time
           title: Average Working Time per Day in seconds
-        averageIncomePerDayInCents:
+        averageIncomePerDayInCent:
           type: number
           title: Average Income Per Day In Cents
         averageIncomePerDayLastUpdateAt:
