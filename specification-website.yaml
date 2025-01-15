@@ -509,7 +509,7 @@ paths:
       security:
         - OAuth2PasswordBearer: [ ]
 
-  /ngo/{ngo_id}/donations:
+  /api-ngo/ngo/{ngo_id}/donation:
     parameters:
       - name: ngo_id
         required: true
@@ -1049,6 +1049,7 @@ components:
               - WRITE_NGO
               - READ_PROJECT
               - WRITE_PROJECT
+              - READ_DONATION
           title: scope
           default:
             - READ_NGO
