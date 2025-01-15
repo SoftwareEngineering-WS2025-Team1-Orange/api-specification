@@ -846,8 +846,7 @@ components:
           type: string
           title: cuid
         lastSolarData:
-          type: object
-          title: Last Solar Data
+          $ref: '#/components/schemas/LastSolarData'
         solarDataLastSuccessfulUpdateAt:
           type: string
           format: date-time
@@ -882,6 +881,7 @@ components:
             - Ok
             - Error
             - Pending
+            - Uninitialized
         earningsLastSuccessfulUpdateAt:
           type: string
           format: date-time
@@ -982,6 +982,52 @@ components:
               type: integer
         newBalance:
           type: number
+
+    LastSolarData:
+      type: object
+      title: Solar Data
+      properties:
+        sysStatus:
+          type: integer
+          format: int64
+          description: "The system status code."
+        stateOfCharge:
+          type: number
+          format: float
+          description: "State of charge as a percentage."
+        production:
+          type: object
+          properties:
+            solar:
+              type: number
+              format: float
+              description: "Solar production value."
+            add:
+              type: number
+              format: float
+              description: "Additional production value."
+            grid:
+              type: number
+              format: float
+              description: "Grid production value."
+        consumption:
+          type: object
+          properties:
+            battery:
+              type: number
+              format: float
+              description: "Battery consumption value."
+            house:
+              type: number
+              format: float
+              description: "House consumption value."
+            wallbox:
+              type: number
+              format: float
+              description: "Wallbox consumption value."
+      required:
+        - production
+        - consumption
 
     Power_Supply:
       type: object
