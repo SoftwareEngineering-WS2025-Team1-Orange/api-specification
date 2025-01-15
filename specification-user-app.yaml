@@ -34,6 +34,7 @@ paths:
               schema:
                 type: integer
 
+
   /api-donator/donator/{donator_id}:
     get:
       operationId: getDonator
@@ -161,6 +162,41 @@ paths:
       responses:
         '201':
           description: Donationbox was added successfully.
+
+
+  /api-donationbox/sendConfig:
+    post:
+      operationId: sendConfig
+      tags:
+        - Donationbox
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Donationbox_SendConfig'
+      responses:
+        '202':
+          description: Config was sent to donationbox successfully.
+
+  /api-donationbox/sendStatusUpdateRequest:
+    post:
+      operationId: sendStatusUpdateRequest
+      tags:
+        - Donationbox
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cuid:
+                  type: string
+                  title: cuid
+      responses:
+        '202':
+          description: Status update request was sent to donationbox successfully. You can now check the status of the donationbox by calling its endpoint.
 
   /api-donator/donation/donator/{donator_id}/ngo/{ngo_id}:
     post:
@@ -746,7 +782,6 @@ components:
       required:
         - id
         - amountInCent
-        - createdAt
         - activeTimeInPeriod
         - donationBox
         - moneroMiningPayout
@@ -759,10 +794,6 @@ components:
         amountInCent:
           type: integer
           title: Amount in cent
-        createdAt:
-          type: string
-          format: date-time
-          title: Created At
         payoutType:
           type: string
           enum:
@@ -772,6 +803,9 @@ components:
           type: string
           format: date-time
           title: Payout Timestamp
+        workingTimeInSeconds:
+          type: integer
+          title: Working time in cents
         moneroMiningPayout:
           $ref: '#/components/schemas/MoneroMiningPayoutBasic'
         donationBox:
@@ -781,13 +815,13 @@ components:
       type: object
       required:
         - timestamp
-        - lastPayoutTimestamp
+        - periodStart
       properties:
         timestamp:
           type: string
           format: date-time
           title: Period Start
-        lastPayoutTimestamp:
+        periodStart:
           type: string
           format: date-time
           title: Period End
@@ -797,36 +831,64 @@ components:
       required:
         - id
         - cuid
-        - earningsLastUpdateSuccessfull
         - name
+        - status
+        - solarStatus
+        - earningsLastUpdateSuccessful
       properties:
         id:
           type: integer
           title: ID
-        cuid:
-          type: string
-          title: cuid
         name:
           type: string
           title: Name
-        lastSolarStatus:
+        cuid:
           type: string
-        earningsLastSuccessfullUpdateAt:
+          title: cuid
+        lastSolarData:
+          $ref: '#/components/schemas/LastSolarData'
+        solarDataLastSuccessfulUpdateAt:
           type: string
           format: date-time
-          title: Earnings Last Successfull Update At
-        earningsLastUpdateSuccessfull:
-          type: boolean
-          title: Earnings Last Update Successfull
-        power_surplus:
+          title: Solar Data Last Update At
+        averageWorkingTimePerDayInSeconds:
           type: number
-          title: Power Surplus
-        power_consumption:
-          type: number
-          title: Power Consumption
-        powerSupplyId:
+          title: Average Working Time per Day in seconds
+        averageWorkingTimePerDayInSecondsLastUpdateAt:
           type: string
-          title: Power Supply Id
+          format: date-time
+          title: Average Working Time per Day in seconds
+        averageIncomePerDayInCents:
+          type: number
+          title: Average Income Per Day In Cents
+        averageIncomePerDayLastUpdateAt:
+          type: string
+          format: date-time
+          title: Average Income Per Day Last Update At
+        status:
+          type: string
+          title: Status
+          enum:
+            - Connected
+            - Disconnected
+            - Working
+            - Uninitialized
+            - Unknown_Status_Code
+        solarStatus:
+          type: string
+          title: Solar Status
+          enum:
+            - Ok
+            - Error
+            - Pending
+            - Uninitialized
+        earningsLastSuccessfulUpdateAt:
+          type: string
+          format: date-time
+          title: Earnings Last Successful Update At
+        earningsLastUpdateSuccessful:
+          type: boolean
+          title: Earnings Last Update Successful
 
     Donationbox_Basic:
       type: object
@@ -861,6 +923,37 @@ components:
           type: string
           title: Power Supply Id
 
+    Donationbox_SendConfig:
+      type: object
+      required:
+        - pluginName
+        - cuid
+        - config
+      properties:
+        pluginName:
+          type: string
+          title: Plugin Name
+        cuid:
+          type: string
+          title: cuid
+        config:
+          type: object
+          title: Config
+          required:
+            - e3dc_user
+            - e3dc_password
+            - e3dc_serial
+          properties:
+            e3dc_user:
+              type: string
+              title: E3DC User
+            e3dc_password:
+              type: string
+              title: E3DC Password
+            e3dc_serial:
+              type: string
+              title: E3DC Serial
+
     Donation_Response:
       type: object
       required:
@@ -889,6 +982,52 @@ components:
               type: integer
         newBalance:
           type: number
+
+    LastSolarData:
+      type: object
+      title: Solar Data
+      properties:
+        sysStatus:
+          type: integer
+          format: int64
+          description: "The system status code."
+        stateOfCharge:
+          type: number
+          format: float
+          description: "State of charge as a percentage."
+        production:
+          type: object
+          properties:
+            solar:
+              type: number
+              format: float
+              description: "Solar production value."
+            add:
+              type: number
+              format: float
+              description: "Additional production value."
+            grid:
+              type: number
+              format: float
+              description: "Grid production value."
+        consumption:
+          type: object
+          properties:
+            battery:
+              type: number
+              format: float
+              description: "Battery consumption value."
+            house:
+              type: number
+              format: float
+              description: "House consumption value."
+            wallbox:
+              type: number
+              format: float
+              description: "Wallbox consumption value."
+      required:
+        - production
+        - consumption
 
     Power_Supply:
       type: object
