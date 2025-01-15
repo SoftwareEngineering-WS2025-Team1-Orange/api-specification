@@ -782,7 +782,6 @@ components:
       required:
         - id
         - amountInCent
-        - createdAt
         - activeTimeInPeriod
         - donationBox
         - moneroMiningPayout
@@ -795,10 +794,6 @@ components:
         amountInCent:
           type: integer
           title: Amount in cent
-        createdAt:
-          type: string
-          format: date-time
-          title: Created At
         payoutType:
           type: string
           enum:
@@ -808,6 +803,9 @@ components:
           type: string
           format: date-time
           title: Payout Timestamp
+        workingTimeInSeconds:
+          type: integer
+          title: Working time in cents
         moneroMiningPayout:
           $ref: '#/components/schemas/MoneroMiningPayoutBasic'
         donationBox:
@@ -817,13 +815,13 @@ components:
       type: object
       required:
         - timestamp
-        - lastPayoutTimestamp
+        - periodStart
       properties:
         timestamp:
           type: string
           format: date-time
           title: Period Start
-        lastPayoutTimestamp:
+        periodStart:
           type: string
           format: date-time
           title: Period End
@@ -836,8 +834,7 @@ components:
         - name
         - status
         - solarStatus
-        - earningsLastUpdateSuccessfull
-        - solarDataLastUpdateAt
+        - earningsLastUpdateSuccessful
       properties:
         id:
           type: integer
@@ -851,7 +848,7 @@ components:
         lastSolarData:
           type: object
           title: Last Solar Data
-        solarDataLastUpdateAt:
+        solarDataLastSuccessfulUpdateAt:
           type: string
           format: date-time
           title: Solar Data Last Update At
@@ -885,11 +882,11 @@ components:
             - Ok
             - Error
             - Pending
-        earningsLastSuccessfullUpdateAt:
+        earningsLastSuccessfulUpdateAt:
           type: string
           format: date-time
           title: Earnings Last Successful Update At
-        earningsLastUpdateSuccessfull:
+        earningsLastUpdateSuccessful:
           type: boolean
           title: Earnings Last Update Successful
 
