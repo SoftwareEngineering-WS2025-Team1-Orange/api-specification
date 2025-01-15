@@ -858,7 +858,7 @@ components:
           type: string
           format: date-time
           title: Average Working Time per Day in seconds
-        averageIncomePerDayInCents:
+        averageIncomePerDayInCent:
           type: number
           title: Average Income Per Day In Cents
         averageIncomePerDayLastUpdateAt:
