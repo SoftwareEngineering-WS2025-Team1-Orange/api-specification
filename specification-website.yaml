@@ -509,7 +509,7 @@ paths:
       security:
         - OAuth2PasswordBearer: [ ]
 
-  /ngo/{ngo_id}/donations:
+  /api-ngo/ngo/{ngo_id}/donation:
     parameters:
       - name: ngo_id
         required: true
@@ -579,9 +579,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ReturnPaginatedDonations'
+                $ref: '#/components/schemas/ReturnPaginatedDonations'
       security:
         - OAuth2PasswordBearer: [ ]
 
@@ -1047,6 +1045,7 @@ components:
               - WRITE_NGO
               - READ_PROJECT
               - WRITE_PROJECT
+              - READ_DONATION
           title: scope
           default:
             - READ_NGO
