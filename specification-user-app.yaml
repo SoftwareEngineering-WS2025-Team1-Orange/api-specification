@@ -178,7 +178,7 @@ paths:
       responses:
         '202':
           description: Config was sent to donationbox successfully.
-    
+
   /api-donationbox/sendStatusUpdateRequest:
     post:
       operationId: sendStatusUpdateRequest

@@ -345,6 +345,76 @@ paths:
         - OAuth2PasswordBearer: [ ]
 
   /api-ngo/ngo/{ngo_id}/project/{project_id}:
+    get:
+      operationId: getProjectsWithDonations
+      tags:
+        - Project
+      parameters:
+        - name: ngo_id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: project_id
+          required: true
+          in: path
+          schema:
+            type: number
+        - name: filter_donation_id
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: filter_created_from
+          required: false
+          in: query
+          schema:
+            format: date-time
+            type: string
+        - name: filter_created_to
+          required: false
+          in: query
+          schema:
+            format: date-time
+            type: string
+        - name: filter_amount_from
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: filter_amount_to
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: pagination_page
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: pagination_page_size
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: sort_for
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: sort_type
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnProjectWithDonations'
+
     put:
       operationId: updateProject
       tags:
@@ -439,18 +509,66 @@ paths:
       security:
         - OAuth2PasswordBearer: [ ]
 
-  /ngo/{ngo_id}/project/{project_id}/donations:
+  /ngo/{ngo_id}/donations:
     parameters:
       - name: ngo_id
-        in: path
         required: true
+        in: path
         schema:
           type: number
-      - name: project_id
-        in: path
-        required: true
+      - name: filter_donation_id
+        required: false
+        in: query
         schema:
           type: number
+      - name: filter_project_id
+        required: false
+        in: query
+        schema:
+          type: number
+      - name: filter_created_from
+        required: false
+        in: query
+        schema:
+          format: date-time
+          type: string
+      - name: filter_created_to
+        required: false
+        in: query
+        schema:
+          format: date-time
+          type: string
+      - name: filter_amount_from
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: filter_amount_to
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: pagination_page
+        required: false
+        in: query
+        schema:
+          type: number
+      - name: pagination_page_size
+        required: false
+        in: query
+        schema:
+          type: number
+      - name: sort_for
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: sort_type
+        required: false
+        in: query
+        schema:
+          type: string
+
     get:
       operationId: getDonations
       tags:
@@ -463,7 +581,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DonationGet'
+                  $ref: '#/components/schemas/ReturnPaginatedDonations'
       security:
         - OAuth2PasswordBearer: [ ]
 
@@ -602,9 +720,7 @@ components:
           title: scope
           default: [ ]
         projects:
-          type: array
-          items:
-            $ref: '#/components/schemas/PaginatedProject'
+          $ref: '#/components/schemas/PaginatedProject'
 
     UpdateNGO:
       type: object
@@ -642,7 +758,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ReturnProjectWithoutFav'
-
 
     ReturnPagination:
       type: object
@@ -734,6 +849,90 @@ components:
           type: integer
           title: NGO Id
 
+    ReturnProjectWithDonations:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - fundraising_goal
+        - fundraising_current
+        - fundraising_closed
+        - progress
+        - target_date
+        - createdAt
+        - updatedAt
+        - category
+        - ngoId
+        - donations
+      properties:
+        id:
+          type: number
+          title: Id
+        name:
+          type: string
+          title: Name
+        description:
+          type: string
+          title: Description
+        banner_uri:
+          type: string
+          format: uri
+          title: Banner URI
+        fundraising_goal:
+          type: number
+          title: Fundraising goal
+          minimum: 1
+        fundraising_current:
+          type: number
+          title: Fundraising current
+        fundraising_closed:
+          type: boolean
+          title: Fundraising closed
+        progress:
+          type: number
+          title: Progress
+        target_date:
+          type: string
+          format: date-time
+          title: Target date
+        createdAt:
+          type: string
+          format: date-time
+          title: Created at
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updated at
+        donations:
+          $ref: '#/components/schemas/ReturnPaginatedDonations'
+          title: donations
+        category:
+          type: string
+          enum:
+            - Education
+            - Health
+            - Environment
+            - Human_Rights
+            - Animal_Rights
+            - Social
+            - OTHER
+          title: Category
+
+        ngoId:
+          type: integer
+          title: NGO Id
+
+    ReturnPaginatedDonations:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/ReturnPagination'
+        donations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DonationGet'
+
     CreateProject:
       type: object
       properties:
@@ -793,11 +992,9 @@ components:
             - Social
             - OTHER
           title: Category
-      required:
-        - name
-        - description
-        - category
-        - fundraising_goal
+        progress:
+          type: number
+          title: Progress
 
     DonationGet:
       type: object
@@ -805,10 +1002,20 @@ components:
         - amount
         - donator
       properties:
+        id:
+          type: number
+          title: Id
         amount:
           type: number
-        donator:
-          $ref: '#/components/schemas/DonatorBase'
+          title: Amount
+        createdAt:
+          format: date-time
+          type: string
+          title: Created at
+        updatedAt:
+          format: date-time
+          type: string
+          title: Updated at
 
     DonatorBase:
       type: object
