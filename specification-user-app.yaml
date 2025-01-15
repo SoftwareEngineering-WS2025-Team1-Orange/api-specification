@@ -1162,9 +1162,20 @@ components:
           type: string
           title: Password
         scope:
-          type: string
-          title: Scope
-          default: ''
+          type: array
+          items:
+            type: string
+            enum:
+              - READ_DONATION
+              - WRITE_DONATION
+              - READ_DONATIONBOX
+              - WRITE_DONATIONBOX
+              - READ_DONATOR
+              - WRITE_DONATOR
+              - READ_NGO
+              - READ_PROJECT
+              - READ_TRANSACTION
+          title: scope
         client_id:
           anyOf:
             - type: string
@@ -1190,12 +1201,9 @@ components:
         token_type:
           type: string
           title: Token Type
-        expires_in:
+        expires_at:
           type: integer
-          title: Expires In
-        scope:
-          type: string
-          title: Token Type
+          title: Expires At
       type: object
       required:
         - access_token
