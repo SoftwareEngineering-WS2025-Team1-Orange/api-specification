@@ -521,7 +521,7 @@ paths:
         in: query
         schema:
           type: number
-      - name: filter_project_id
+      - name: project_id
         required: false
         in: query
         schema:
