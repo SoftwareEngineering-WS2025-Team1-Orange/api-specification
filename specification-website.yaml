@@ -997,23 +997,19 @@ components:
     DonationGet:
       type: object
       required:
-        - amount
-        - donator
+        - id
+        - amountInCent
       properties:
         id:
           type: number
           title: Id
-        amount:
+        amountInCent:
           type: number
           title: Amount
         createdAt:
           format: date-time
           type: string
           title: Created at
-        updatedAt:
-          format: date-time
-          type: string
-          title: Updated at
 
     DonatorBase:
       type: object
