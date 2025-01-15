@@ -579,9 +579,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ReturnPaginatedDonations'
+                $ref: '#/components/schemas/ReturnPaginatedDonations'
       security:
         - OAuth2PasswordBearer: [ ]
 
