@@ -176,8 +176,27 @@ paths:
             schema:
               $ref: '#/components/schemas/Donationbox_SendConfig'
       responses:
-        '201':
-          description: Config was sent successfully.
+        '202':
+          description: Config was sent to donationbox successfully.
+    
+  /api-donationbox/sendStatusUpdateRequest:
+    post:
+      operationId: sendStatusUpdateRequest
+      tags:
+        - Donationbox
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cuid:
+                  type: string
+                  title: cuid
+      responses:
+        '202':
+          description: Status update request was sent to donationbox successfully. You can now check the status of the donationbox by calling its endpoint.
 
   /api-donator/donation/donator/{donator_id}/ngo/{ngo_id}:
     post:
@@ -814,45 +833,65 @@ components:
       required:
         - id
         - cuid
-        - last_status
-        - earningsLastSuccessfullUpdateAt,
-        - earningsLastUpdateSuccessfull
         - name
+        - status
+        - solarStatus
+        - earningsLastUpdateSuccessfull
+        - solarDataLastUpdateAt
       properties:
         id:
           type: integer
           title: ID
-        cuid:
-          type: string
-          title: cuid
         name:
           type: string
           title: Name
-        last_status:
+        cuid:
           type: string
+          title: cuid
+        lastSolarData:
+          type: object
+          title: Last Solar Data
+        solarDataLastUpdateAt:
+          type: string
+          format: date-time
+          title: Solar Data Last Update At
+        averageWorkingTimePerDayInSeconds:
+          type: number
+          title: Average Working Time per Day in seconds
+        averageWorkingTimePerDayInSecondsLastUpdateAt:
+          type: string
+          format: date-time
+          title: Average Working Time per Day in seconds
+        averageIncomePerDayInCents:
+          type: number
+          title: Average Income Per Day In Cents
+        averageIncomePerDayLastUpdateAt:
+          type: string
+          format: date-time
+          title: Average Income Per Day Last Update At
+        status:
+          type: string
+          title: Status
           enum:
-            - OFFLINE
-            - ERROR
-            - CONNECTED # SYSTEM IS UP BUT NO SURPLUS POWER AVAILABLE
-            - READY     # SYSTEM IS READY AND SURPLUS POWER IS AVAILABLE
-            - WORKING   # IS RUNNING TASK
-          title: Last Status
+            - Connected
+            - Disconnected
+            - Working
+            - Uninitialized
+            - Unknown_Status_Code
+        solarStatus:
+          type: string
+          title: Solar Status
+          enum:
+            - Ok
+            - Error
+            - Pending
         earningsLastSuccessfullUpdateAt:
           type: string
           format: date-time
-          title: Earnings Last Successfull Update At
+          title: Earnings Last Successful Update At
         earningsLastUpdateSuccessfull:
           type: boolean
-          title: Earnings Last Update Successfull
-        power_surplus:
-          type: number
-          title: Power Surplus
-        power_consumption:
-          type: number
-          title: Power Consumption
-        powerSupplyId:
-          type: string
-          title: Power Supply Id
+          title: Earnings Last Update Successful
 
     Donationbox_Basic:
       type: object
