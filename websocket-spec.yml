@@ -206,9 +206,6 @@ components:
             - 'ERR_container_already_running'
             - 'ERR_image_not_found'
             - 'ERR_could_not_start_container'
-            - 'ERR_connection_to_mining_pool_failed'
-            - 'ERR_authentication_on_mining_pool_failed'
-            - 'ERR_other'
 
     StopContainerResponse:
       type: object
