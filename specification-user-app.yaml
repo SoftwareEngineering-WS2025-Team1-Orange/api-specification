@@ -32,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                type: integer
+                $ref: '#/components/schemas/Donator'
 
 
   /api-donator/donator/{donator_id}:
